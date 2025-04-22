@@ -7,7 +7,9 @@ public class Bullet : MonoBehaviour
     [SerializeField] private float speed = 20f;
     [SerializeField] private float lifetime = 2f;
     [SerializeField] private GameObject impactPrefab;
+    [SerializeField] private int damage = 1;
     private float timer;
+    
 
     void OnEnable()
     {
@@ -34,6 +36,10 @@ public class Bullet : MonoBehaviour
 
             SpawnImpact();
             ReturnToPool();
+        }
+        else if (other.gameObject.CompareTag("Enemy"))
+        {
+            other.GetComponent<Enemy>()?.TakeDamage(damage);
         }
 
     }
