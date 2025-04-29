@@ -6,23 +6,20 @@ using UnityEngine.InputSystem;
 public class Player : MonoBehaviour
 {
     [Header("Movement")]
-    [SerializeField] private float moveSpeed = 5f;
     private Vector2 moveInput;
     private Rigidbody rb;
 
-    [Header("Player Health")]
-    [SerializeField] private int maxHealth = 3;
-    [SerializeField] private int currentHealth;
-
     [Header("References")]
-    [SerializeField] private Transform playerVisual;
+    private Transform playerVisual;
 
     private Camera mainCam;
     private PlayerInputActions inputActions;
+    private PlayerSettings playerSettings;
 
     private void Awake()
     {
         rb = GetComponent<Rigidbody>();
+        playerSettings = GetComponent<PlayerSettings>();
         mainCam = Camera.main;
 
         // Instantiate and enable your input actions
@@ -33,7 +30,7 @@ public class Player : MonoBehaviour
         inputActions.player.Move.performed += ctx => OnMove(ctx);
         inputActions.player.Move.canceled += ctx => OnMove(ctx); // Stops movement when input released
 
-        currentHealth = maxHealth;
+        playerVisual = playerSettings.PlayerVisualTransform;
     }
     private void OnDestroy()
     {
@@ -48,13 +45,17 @@ public class Player : MonoBehaviour
     }
     private void FixedUpdate()
     {
-        HandleMovement();
-        RotateVisualTowardsMouse();
+        if (GameManager.Instance.GetCanPlayerMove())
+        {
+            HandleMovement();
+            RotateVisualTowardsMouse();
+        }
     }
     private void HandleMovement()
     {
         Vector3 move = new Vector3(moveInput.x, 0f, moveInput.y);
-        rb.MovePosition(rb.position + move.normalized * moveSpeed * Time.fixedDeltaTime);
+        rb.MovePosition(rb.position + move.normalized * playerSettings.CurrentMovementSpeed * Time.fixedDeltaTime);
+        Debug.Log(playerSettings.CurrentMovementSpeed);
     }
     private void RotateVisualTowardsMouse()
     {
@@ -74,22 +75,6 @@ public class Player : MonoBehaviour
                 Quaternion targetRotation = Quaternion.LookRotation(direction);
                 playerVisual.rotation = targetRotation;
             }
-        }
-    }
-    public void TakeDamage(int amount)
-    {
-        currentHealth -= amount;
-        if (currentHealth <= 0 )
-        {
-            // Player is dead
-        }
-    }
-    public void Heal(int amount)
-    {
-        currentHealth += amount;
-        if (currentHealth >= maxHealth)
-        {
-            currentHealth = maxHealth;
         }
     }
 }

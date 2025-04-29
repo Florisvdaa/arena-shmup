@@ -6,25 +6,34 @@ using UnityEngine.InputSystem;
 
 public class PlayerShoot : MonoBehaviour
 {
-    [Header("Shoot settings")]
-    [SerializeField] private Transform firePoint; // Where bullets spawn from (e.g., a barrel tip)
-    [SerializeField] private float fireRate = 0.2f; // Time between shots
-
+    [Header("Shoot Settings")]
+    private Transform firePoint; // Where bullets spawn 
     private float fireCooldown = 0f;
+    
+    private MMF_Player shootFeedback; // Drag the MMF_Player here in Inspector
+    private PlayerSettings playerSettings;
 
-    [SerializeField] private MMF_Player shootFeedback; // Drag the MMF_Player here in Inspector
+    private void Start()
+    {
+        playerSettings = GetComponent<PlayerSettings>();
+
+        firePoint = playerSettings.FirePoint;
+        shootFeedback = playerSettings.ShootFeedback;
+    }
     private void Update()
     {
-        fireCooldown -= Time.deltaTime;
-
-        if (Mouse.current.leftButton.isPressed && fireCooldown <= 0f)
+        if (GameManager.Instance.GetCanPlayerMove())
         {
-            Shoot();
-            fireCooldown = fireRate;
+            fireCooldown -= Time.deltaTime;
+
+            if (Mouse.current.leftButton.isPressed && fireCooldown <= 0f)
+            {
+                Shoot();
+                fireCooldown = playerSettings.CurrentFireRate;
+            }
         }
     }
-
-    void Shoot()
+    private void Shoot()
     {
         GameObject bullet = BulletPool.Instance.GetBullet();
         if (bullet == null) return;

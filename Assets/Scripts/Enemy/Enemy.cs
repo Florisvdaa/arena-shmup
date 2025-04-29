@@ -1,6 +1,9 @@
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using MoreMountains.Feedbacks;
 using UnityEngine;
+using UnityEngine.AI;
 
 public class Enemy : MonoBehaviour
 {
@@ -8,23 +11,70 @@ public class Enemy : MonoBehaviour
     [SerializeField] private Transform enemyVisual;
     [SerializeField] private int damage = 1;
     [SerializeField] private int health = 1;
+    [SerializeField] private float movementSpeed = 3.5f;
+    [SerializeField] private int score = 100;
+    private NavMeshAgent agent;
+    private Transform playerTargetTransform;
 
-    private void OnTriggerEnter(Collider other)
+    [SerializeField] private MMF_Player deathParticle;
+    public event Action OnDeath;
+    private void Awake()
     {
-        if (other.gameObject.CompareTag("Player")) 
+        agent = GetComponent<NavMeshAgent>();
+        if (agent != null)
         {
-            other.GetComponent<Player>().TakeDamage(damage);
-            Destroy(this.gameObject, 0.5f);
+            agent.speed = movementSpeed;
+        }
+
+        playerTargetTransform = GameManager.Instance.GetPlayerTransform();
+    }
+    private void Update()
+    {
+        if (playerTargetTransform != null && agent != null)
+        {
+            agent.SetDestination(playerTargetTransform.position);
         }
     }
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.CompareTag("Player"))
+        {
+            PlayerHealth playerHealth = other.GetComponent<PlayerHealth>();
+            if (playerHealth != null)
+            {
+                playerHealth.TakeDamage(damage);
+            }
 
+            Die(false); // Die WITHOUT giving score
+        }
+    }
     public void TakeDamage(int amount)
     {
         health -= amount;
-        if (health < 0)
+        if (health <= 0)
         {
-            // referance to the score system, add score for example
-            Destroy(this.gameObject);
+            Die(true); // Die WITH giving score
         }
+    }
+    private void Die(bool addScore)
+    {
+        if (addScore)
+        {
+            ScoreManager.Instance.AddScore(score);
+        }
+
+        deathParticle.PlayFeedbacks();
+        movementSpeed = 0;
+
+        PickUpSpawner.Instance.TrySpawnPickup(transform.position); // First try spawn pick up then die
+
+        Invoke(nameof(DieInvoke), 0.5f);
+    }
+
+    private void DieInvoke()
+    {
+
+        OnDeath?.Invoke();
+        Destroy(gameObject);
     }
 }

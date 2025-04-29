@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 7758694469926057400}
   - component: {fileID: 6201141772153979156}
   - component: {fileID: 7808271736403321493}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Bullet
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -47,9 +47,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9311f538835d95c4d9e63cc1697da6f8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 20
+  speed: 50
   lifetime: 2
   impactPrefab: {fileID: 8473362774675378647, guid: 9402713a7d1066142919c70b506cb9d6, type: 3}
+  damage: 1
 --- !u!135 &6201141772153979156
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -109,7 +110,7 @@ GameObject:
   - component: {fileID: 1014762789807887166}
   - component: {fileID: 8568427248164349862}
   - component: {fileID: 7918543885481045588}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Sphere
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -190,7 +191,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3083741141747456484}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Bullet Visual
   m_TagString: Untagged
   m_Icon: {fileID: 0}

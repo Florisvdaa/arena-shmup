@@ -4,13 +4,11 @@ using UnityEngine;
 
 public class Bullet : MonoBehaviour
 {
-    [SerializeField] private float speed = 20f;
+    [SerializeField] private float speed = 50f;
     [SerializeField] private float lifetime = 2f;
     [SerializeField] private GameObject impactPrefab;
     [SerializeField] private int damage = 1;
     private float timer;
-    
-
     void OnEnable()
     {
         timer = lifetime;
@@ -40,8 +38,9 @@ public class Bullet : MonoBehaviour
         else if (other.gameObject.CompareTag("Enemy"))
         {
             other.GetComponent<Enemy>()?.TakeDamage(damage);
+            SpawnImpact();
+            ReturnToPool();
         }
-
     }
     private void SpawnImpact()
     {
