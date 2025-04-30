@@ -21,7 +21,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &67927128625321377
 Transform:
   m_ObjectHideFlags: 0
@@ -222,7 +222,6 @@ MonoBehaviour:
   ForceTimescaleMode: 0
   ForcedTimescaleMode: 1
   DurationMultiplier: 1
-  TimescaleMultiplier: 1
   RandomizeDuration: 0
   RandomDurationMultiplier: {x: 0.5, y: 1.5}
   DisplayFullDurationDetails: 0
@@ -285,9 +284,6 @@ MonoBehaviour:
       m_PersistentCalls:
         m_Calls: []
     OnSkipToTheEnd:
-      m_PersistentCalls:
-        m_Calls: []
-    OnInitializationComplete:
       m_PersistentCalls:
         m_Calls: []
     OnEnable:
@@ -383,7 +379,8 @@ MonoBehaviour:
           ButtonText: 
         Owner: {fileID: 257968549699992772}
         DebugActive: 0
-        GameObjectToInstantiate: {fileID: 7202886328449081747, guid: a6426d824ca78984bb7ee0f497de0275, type: 3}
+        GameObjectToInstantiate: {fileID: 7202886328449081747, guid: a6426d824ca78984bb7ee0f497de0275,
+          type: 3}
         PositionMode: 0
         AlsoApplyRotation: 0
         AlsoApplyScale: 0
@@ -478,7 +475,8 @@ MonoBehaviour:
         FlashID: 0
         TargetFlash: {fileID: 0}
     - rid: 2
-      type: {class: MMF_CinemachineImpulse, ns: MoreMountains.FeedbacksForThirdParty, asm: MoreMountains.Tools}
+      type: {class: MMF_CinemachineImpulse, ns: MoreMountains.FeedbacksForThirdParty,
+        asm: MoreMountains.Tools}
       data:
         Active: 1
         UniqueID: -352514016
@@ -593,7 +591,6 @@ MonoBehaviour:
           m_PropagationSpeed: 343
         Velocity: {x: 0, y: 0, z: 0}
         ClearImpulseOnStop: 0
-        DrawGizmos: 0
     - rid: 3
       type: {class: MMF_FreezeFrame, ns: MoreMountains.Feedbacks, asm: MoreMountains.Tools}
       data:
