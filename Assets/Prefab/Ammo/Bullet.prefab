@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6286728447238783844}
   - component: {fileID: 7758694469926057400}
+  - component: {fileID: 4572697946734451220}
   - component: {fileID: 6201141772153979156}
   - component: {fileID: 7808271736403321493}
   m_Layer: 6
@@ -51,6 +52,29 @@ MonoBehaviour:
   lifetime: 2
   impactPrefab: {fileID: 8473362774675378647, guid: 9402713a7d1066142919c70b506cb9d6, type: 3}
   damage: 1
+--- !u!136 &4572697946734451220
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3041417708974628155}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.3
+  m_Height: 1.3
+  m_Direction: 2
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!135 &6201141772153979156
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -66,9 +90,9 @@ SphereCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 1
+  m_IsTrigger: 0
   m_ProvidesContacts: 0
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 3
   m_Radius: 0.25
   m_Center: {x: 0, y: 0, z: 0}
@@ -110,6 +134,7 @@ GameObject:
   - component: {fileID: 1014762789807887166}
   - component: {fileID: 8568427248164349862}
   - component: {fileID: 7918543885481045588}
+  - component: {fileID: 1517728970933475571}
   m_Layer: 6
   m_Name: Sphere
   m_TagString: Untagged
@@ -127,8 +152,8 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
-  m_ConstrainProportionsScale: 1
+  m_LocalScale: {x: 0.3, y: 0.3, z: 1.3}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 3083741141747456484}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -160,7 +185,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 6104526804040681669, guid: 5c82295af80bf15408d26df342d1271e, type: 3}
+  - {fileID: 2100000, guid: fbb00130cec2fa548914af913739ca1e, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -182,6 +207,23 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!114 &1517728970933475571
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5883053886202755614}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8b9a305e18de0c04dbd257a21cd47087, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sharedProfile: {fileID: 11400000, guid: a80268794e9a6094f98b8b96fcbdb044, type: 2}
+  isGlobal: 0
+  blendDistance: 0
+  weight: 1
+  priority: 0
 --- !u!1 &6448519247630191110
 GameObject:
   m_ObjectHideFlags: 0

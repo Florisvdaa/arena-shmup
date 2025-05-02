@@ -32,7 +32,7 @@ public class Bullet : MonoBehaviour
         {
             Debug.Log("hit the wall");
 
-            SpawnImpact();
+            //SpawnImpact();
             ReturnToPool();
         }
         else if (other.gameObject.CompareTag("Enemy"))

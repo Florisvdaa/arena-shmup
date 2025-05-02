@@ -26,15 +26,14 @@ public class PixelExplosionSpawner : MonoBehaviour
                 rb.AddExplosionForce(explosionForce, explosionPos, explosionRadius, upwardModifier, ForceMode.Impulse);
             }
 
-            Destroy(cube, 3f); // auto-clean after 3 seconds
+            Destroy(cube, 2f); // auto-clean after 2 seconds
         }
     }
-
-    void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            Explode();
-        }
-    }
+    //void Update()
+    //{
+    //    if (Input.GetKeyDown(KeyCode.Space))
+    //    {
+    //        Explode();
+    //    }
+    //}
 }
