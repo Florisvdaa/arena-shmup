@@ -11,10 +11,10 @@ GameObject:
   - component: {fileID: 6286728447238783844}
   - component: {fileID: 7758694469926057400}
   - component: {fileID: 4572697946734451220}
-  - component: {fileID: 6201141772153979156}
   - component: {fileID: 7808271736403321493}
+  - component: {fileID: 5288587258400901878}
   m_Layer: 6
-  m_Name: Bullet
+  m_Name: BulletSelfMade
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -52,6 +52,8 @@ MonoBehaviour:
   lifetime: 2
   impactPrefab: {fileID: 8473362774675378647, guid: 9402713a7d1066142919c70b506cb9d6, type: 3}
   damage: 1
+  bulletHitSize: 5
+  bulletHitDuration: 1
 --- !u!136 &4572697946734451220
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -67,34 +69,13 @@ CapsuleCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 2
   m_Radius: 0.3
   m_Height: 1.3
   m_Direction: 2
-  m_Center: {x: 0, y: 0, z: 0}
---- !u!135 &6201141772153979156
-SphereCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3041417708974628155}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 0
-  serializedVersion: 3
-  m_Radius: 0.25
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!54 &7808271736403321493
 Rigidbody:
@@ -123,6 +104,26 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 116
   m_CollisionDetection: 0
+--- !u!114 &5288587258400901878
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3041417708974628155}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3b07a68310c2e8b428dd6d96e51a096a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  mask:
+    serializedVersion: 2
+    m_Bits: 0
+  speed: 50
+  lifetime: 2
+  bulletHitSize: 1
+  bulletHitDuration: 2
+  hitParticles: {fileID: 1292586044316630, guid: 109235e73b103ce41bf3b64196285e20, type: 3}
 --- !u!1 &5883053886202755614
 GameObject:
   m_ObjectHideFlags: 0

@@ -1,3 +1,4 @@
+using FXV;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -8,15 +9,22 @@ public class Bullet : MonoBehaviour
     [SerializeField] private float lifetime = 2f;
     [SerializeField] private GameObject impactPrefab;
     [SerializeField] private int damage = 1;
+    [SerializeField] private float bulletHitSize = 1f;
+    [SerializeField] private float bulletHitDuration = 2f;
+
     private float timer;
+
     void OnEnable()
     {
         timer = lifetime;
+
+        // Reset velocity for safety if using rigidbody
+        Rigidbody rb = GetComponent<Rigidbody>();
+        rb.velocity = transform.forward * speed;
     }
+
     void Update()
     {
-        transform.position += transform.forward * speed * Time.deltaTime;
-
         timer -= Time.deltaTime;
         if (timer <= 0f)
         {
@@ -26,30 +34,39 @@ public class Bullet : MonoBehaviour
 
     void OnTriggerEnter(Collider other)
     {
-        // TODO: damage or effects
-        //gameObject.SetActive(false);
-        if (other.gameObject.CompareTag("Wall"))
-        {
-            Debug.Log("hit the wall");
+        Debug.Log($"[Bullet] Trigger entered with: {other.name}");
 
-            //SpawnImpact();
-            ReturnToPool();
-        }
-        else if (other.gameObject.CompareTag("Enemy"))
+        if (other.CompareTag("Enemy"))
         {
+            Debug.Log("[Bullet] Hit Enemy");
             other.GetComponent<Enemy>()?.TakeDamage(damage);
             SpawnImpact();
             ReturnToPool();
         }
+        else if (other.CompareTag("Wall"))
+        {
+            Debug.Log("[Bullet] Hit Wall");
+            Shield shield = other.GetComponentInParent<Shield>();
+            if (shield != null)
+            {
+                Debug.Log("[Bullet] Hit Shield");
+                shield.OnHit(transform.position, -transform.forward, bulletHitSize, bulletHitDuration);
+            }
+
+            SpawnImpact();
+            ReturnToPool();
+        }
     }
+
     private void SpawnImpact()
     {
-        GameObject fx = Instantiate(impactPrefab, transform.position, Quaternion.identity);
-        fx.SetActive(true);
-
-        // Optional: destroy after it finishes
-        Destroy(fx, 1f);
+        if (impactPrefab)
+        {
+            GameObject fx = Instantiate(impactPrefab, transform.position, Quaternion.identity);
+            Destroy(fx, 1f);
+        }
     }
+
     private void ReturnToPool()
     {
         BulletPool.Instance.ReturnBullet(this.gameObject);

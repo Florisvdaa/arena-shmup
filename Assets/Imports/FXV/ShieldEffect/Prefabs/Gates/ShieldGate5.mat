@@ -9,6 +9,8 @@ Material:
   m_PrefabAsset: {fileID: 0}
   m_Name: ShieldGate5
   m_Shader: {fileID: 4800000, guid: 698d80be1edae534d88a3eb185ddaa31, type: 3}
+  m_Parent: {fileID: 0}
+  m_ModifiedSerializedProperties: 0
   m_ValidKeywords:
   - ACTIVATION_EFFECT_ON
   - ACTIVATION_TYPE_CUSTOM_TEX
@@ -28,6 +30,7 @@ Material:
   stringTagMap: {}
   disabledShaderPasses:
   - Postprocess
+  m_LockedProperties: 
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
@@ -97,6 +100,7 @@ Material:
     - _ActivationTexScale: 1
     - _ActivationTime: 1
     - _ActivationTime01: 1
+    - _BackfacesIntensity: 1
     - _BlendDstMode: 10
     - _BlendSrcMode: 5
     - _BumpScale: 1
@@ -106,6 +110,7 @@ Material:
     - _CullMode: 2
     - _Cutoff: 0.5
     - _DetailNormalMapScale: 1
+    - _DirVisActivationInfluence: 1
     - _DirectionVisibility: 1
     - _DistortionFactor: 0.2
     - _DistortionScale: 2
@@ -142,6 +147,7 @@ Material:
     - _PatternScale: 12
     - _PatternScrollX: 0
     - _PatternScrollY: 0
+    - _PostprocessIntensity: 1
     - _Preview: 0
     - _RefractionBackground: 1
     - _RefractionBackgroundExposure: 0
@@ -153,6 +159,7 @@ Material:
     - _RefractionTextureRimInfluence: 1
     - _RimMax: 0.68
     - _RimMin: 0.23
+    - _RimVariationFrequency: 0.5
     - _RimVariationScale: 0
     - _SrcBlend: 1
     - _TextureAnimationFactor: 10
