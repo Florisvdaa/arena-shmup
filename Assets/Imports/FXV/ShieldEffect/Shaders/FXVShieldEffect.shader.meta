@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 698d80be1edae534d88a3eb185ddaa31
+ShaderImporter:
+  externalObjects: {}
+  defaultTextures:
+  - _RimTexture: {instanceID: 0}
+  - _MainTex: {instanceID: 0}
+  - _DistortTex: {instanceID: 0}
+  - _PatternTex: {instanceID: 0}
+  - _ActivationTex: {instanceID: 0}
+  nonModifiableTextures: []
+  preprocessorOverride: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
