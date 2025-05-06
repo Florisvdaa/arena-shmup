@@ -12,6 +12,11 @@ public class Player : MonoBehaviour
     [Header("References")]
     private Transform playerVisual;
 
+    [Header("Upgrade Input")]
+    [SerializeField] private float upgradeHoldDuration = 1.5f;
+    private float upgradeHoldTimer = 0f;
+    private bool isHoldingUpgrade = false;
+
     private Camera mainCam;
     private PlayerInputActions inputActions;
     private PlayerSettings playerSettings;
@@ -30,18 +35,36 @@ public class Player : MonoBehaviour
         inputActions.player.Move.performed += ctx => OnMove(ctx);
         inputActions.player.Move.canceled += ctx => OnMove(ctx); // Stops movement when input released
 
+        inputActions.player.Upgrade.performed += ctx => StartUpgradeHold();
+        inputActions.player.Upgrade.canceled += ctx => CancelUpgradeHold();
+
         playerVisual = playerSettings.PlayerVisualTransform;
     }
+    
     private void OnDestroy()
     {
         // Always clean up event subscriptions!
         inputActions.player.Move.performed -= ctx => OnMove(ctx);
         inputActions.player.Move.canceled -= ctx => OnMove(ctx);
+        inputActions.player.Upgrade.performed -= ctx => StartUpgradeHold();
+        inputActions.player.Upgrade.canceled -= ctx => CancelUpgradeHold();
         inputActions.Disable();
     }
     private void OnMove(InputAction.CallbackContext context)
     {
         moveInput = context.ReadValue<Vector2>();
+    }
+    private void Update()
+    {
+        if (isHoldingUpgrade)
+        {
+            upgradeHoldTimer += Time.unscaledDeltaTime;
+            if (upgradeHoldTimer >= upgradeHoldDuration)
+            {
+                TriggerUpgradeScreen();
+                CancelUpgradeHold(); // Reset the timer
+            }
+        }
     }
     private void FixedUpdate()
     {
@@ -77,4 +100,28 @@ public class Player : MonoBehaviour
             }
         }
     }
+
+    #region Upgrade
+    private void StartUpgradeHold()
+    {
+        if (ProgressManager.Instance.IsUpgradeAvailable())
+        {
+            Debug.Log("loading upgrade");
+            isHoldingUpgrade = true;
+            upgradeHoldTimer = 0f;
+        }
+    }
+
+    private void CancelUpgradeHold()
+    {
+        isHoldingUpgrade = false;
+        upgradeHoldTimer = 0f;
+    }
+
+    private void TriggerUpgradeScreen()
+    {
+        //Time.timeScale = 0f;
+        //UIManager.Instance.ShowUpgradeMenu(); // Replace with your actual upgrade UI call
+    }
+    #endregion
 }

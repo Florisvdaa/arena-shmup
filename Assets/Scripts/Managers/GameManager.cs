@@ -70,8 +70,9 @@ public class GameManager : MonoBehaviour
     public void StartNextWave()
     {
         currentWave++;
-        int enemiesThisWave = baseEnemiesPerWave + (currentWave - 1) * 2;
-        SpawnManager.Instance.StartWave(enemiesThisWave);
+        //int enemiesThisWave = baseEnemiesPerWave + (currentWave - 1) * 2;
+        //SpawnManager.Instance.StartWave(enemiesThisWave);
+        SpawnManager.Instance.StartWave(100);
     }
     public void OnWaveComplete()
     {
@@ -83,7 +84,7 @@ public class GameManager : MonoBehaviour
 
         UIManager.Instance.ShowWaveComplete();
         yield return new WaitForSeconds(2f);
-        CameraSwitcher.Instance.SetUpgradeCam();
+        //CameraSwitcher.Instance.SetUpgradeCam();
         yield return new WaitForSeconds(1f);
         UIManager.Instance.ShowUpgradeUI();
     }
@@ -102,5 +103,6 @@ public class GameManager : MonoBehaviour
     #region References
     public Transform GetPlayerTransform() => currentPlayerTransform;
     public bool GetCanPlayerMove() => canPlayerMove;
+    public int GetCurrentWave() => currentWave;
     #endregion
 }

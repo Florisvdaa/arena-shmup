@@ -21,7 +21,6 @@ Material:
   - USE_DISTORTION_FOR_MAIN_TEXTURE
   - USE_MAIN_TEXTURE
   - USE_MATERIAL_PROPERTY_BLOCKS
-  - USE_REFRACTION
   m_InvalidKeywords: []
   m_LightmapFlags: 5
   m_EnableInstancingVariants: 1
@@ -155,7 +154,7 @@ Material:
     - _RefractionPatternRimInfluence: 0
     - _RefractionRimMax: -1
     - _RefractionRimMin: 1
-    - _RefractionScale: 1
+    - _RefractionScale: 0.21
     - _RefractionTextureRimInfluence: 2.04
     - _RimMax: 0.68
     - _RimMin: 0.23

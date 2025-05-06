@@ -18,6 +18,7 @@ public class PickUp : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
+        // is player check via tag? then instance call from player settings.
         PlayerSettings playerSettings = other.GetComponent<PlayerSettings>();
         if (playerSettings != null)
         {
@@ -46,25 +47,6 @@ public class PickUp : MonoBehaviour
                 break;
         }
     }
-
-    //private IEnumerator ApplySpeedBoost(PlayerSettings playerSettings)
-    //{
-    //    playerSettings.CurrentMovementSpeed += pickupItem.effectAmount;
-
-    //    yield return new WaitForSeconds(pickupItem.duration);
-
-    //    playerSettings.CurrentMovementSpeed -= pickupItem.effectAmount;
-    //    Debug.Log("compiling?");
-    //}
-
-    //private IEnumerator ApplyFireRateBoost(PlayerSettings playerSettings)
-    //{
-    //    playerSettings.CurrentFireRate -= pickupItem.effectAmount;
-
-    //    yield return new WaitForSeconds(pickupItem.duration);
-
-    //    playerSettings.CurrentFireRate += pickupItem.effectAmount;
-    //}
     private void HealPlayer(PlayerSettings playerSettings)
     {
         playerSettings.CurrentHealth += (int)pickupItem.effectAmount;

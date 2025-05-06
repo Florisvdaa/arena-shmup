@@ -12,7 +12,6 @@ GameObject:
   - component: {fileID: 7758694469926057400}
   - component: {fileID: 4572697946734451220}
   - component: {fileID: 7808271736403321493}
-  - component: {fileID: 5288587258400901878}
   m_Layer: 6
   m_Name: BulletSelfMade
   m_TagString: Untagged
@@ -104,26 +103,6 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 116
   m_CollisionDetection: 0
---- !u!114 &5288587258400901878
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3041417708974628155}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3b07a68310c2e8b428dd6d96e51a096a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  mask:
-    serializedVersion: 2
-    m_Bits: 0
-  speed: 50
-  lifetime: 2
-  bulletHitSize: 1
-  bulletHitDuration: 2
-  hitParticles: {fileID: 1292586044316630, guid: 109235e73b103ce41bf3b64196285e20, type: 3}
 --- !u!1 &5883053886202755614
 GameObject:
   m_ObjectHideFlags: 0

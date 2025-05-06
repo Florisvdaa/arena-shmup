@@ -8,7 +8,6 @@ public class CameraSwitcher : MonoBehaviour
     public static CameraSwitcher Instance { get; private set; }
     [SerializeField] private CinemachineVirtualCamera mainMenuCam;
     [SerializeField] private CinemachineVirtualCamera gameCam;
-    [SerializeField] private CinemachineVirtualCamera upgradeCam;
 
     private void Awake()
     {
@@ -31,19 +30,10 @@ public class CameraSwitcher : MonoBehaviour
     {
         mainMenuCam.Priority= 10;
         gameCam.Priority= 0;
-        upgradeCam.Priority = 0;
     }
     public void SetGameCam()
     {
         gameCam.Priority = 10;
         mainMenuCam.Priority = 0;
-        upgradeCam.Priority = 0;
     }
-    public void SetUpgradeCam()
-    {
-        gameCam.Priority = 0;
-        mainMenuCam.Priority = 0;
-        upgradeCam.Priority = 10;
-    }
-
 }

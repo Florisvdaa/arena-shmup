@@ -18,6 +18,7 @@ Material:
   - USE_COLOR_RIM
   - USE_DEPTH_OVERLAP_RIM
   - USE_DIRECTION_VISIBILITY
+  - USE_MATERIAL_PROPERTY_BLOCKS
   - USE_REFRACTION
   m_InvalidKeywords: []
   m_LightmapFlags: 5

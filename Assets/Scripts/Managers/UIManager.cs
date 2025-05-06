@@ -19,6 +19,13 @@ public class UIManager : MonoBehaviour
 
     [Header("Game UI")]
     [SerializeField] private GameObject gameUI;
+    [SerializeField] private TextMeshProUGUI waveText;
+    [SerializeField] private TextMeshProUGUI killChainMultiplier;
+    [SerializeField] private TextMeshProUGUI currentPlayerLevel;
+    [SerializeField] private Slider playerHealthSlider;
+    [SerializeField] private TextMeshProUGUI playerHealthText;
+    [SerializeField] private Slider playerExpSlider;
+    [SerializeField] private TextMeshProUGUI expValueText;
 
     [Header("Upgrade UI")]
     [SerializeField] private GameObject upgradeParent;
@@ -42,6 +49,10 @@ public class UIManager : MonoBehaviour
     [SerializeField] private TextMeshProUGUI playerspeed;
     [SerializeField] private TextMeshProUGUI playershoot;
     [SerializeField] private TextMeshProUGUI playerhealth;
+    [SerializeField] private TextMeshProUGUI expMultiplierText;
+    [SerializeField] private TextMeshProUGUI currentExpText;
+    [SerializeField] private TextMeshProUGUI currentKillChhain;
+    [SerializeField] private TextMeshProUGUI currentLevel;
     private void Awake()
     {
         if (Instance != null && Instance != this)
@@ -63,11 +74,26 @@ public class UIManager : MonoBehaviour
     private void Update()
     {
         scoreText.text = "Score: " + ScoreManager.Instance.GetCurrentScore();
+        waveText.text = GameManager.Instance.GetCurrentWave().ToString();
+        killChainMultiplier.text = KillChainManager.Instance.GetKillChainMultiplier().ToString() + "X";
+        currentPlayerLevel.text = ProgressManager.Instance.GetCurrentLevel().ToString();
+        
+        playerHealthSlider.maxValue = PlayerSettings.Instance.CurrentMaxHealth;
+        playerHealthSlider.value = PlayerSettings.Instance.CurrentHealth;
+        playerHealthText.text = $"HP: {(int)PlayerSettings.Instance.CurrentHealth} / {(int)PlayerSettings.Instance.CurrentMaxHealth}";
+        // EXP Slider update
+        playerExpSlider.maxValue = ProgressManager.Instance.GetEXPTillNextLevel();
+        playerExpSlider.value = ProgressManager.Instance.GetCurrentEXP();
+        expValueText.text = $"EXP: {(int)ProgressManager.Instance.GetCurrentEXP()} / {(int)ProgressManager.Instance.GetEXPTillNextLevel()}";
 
         // DEBUG
-        playerspeed.text = playerSettings.CurrentMovementSpeed.ToString();
-        playershoot.text = playerSettings.CurrentFireRate.ToString();
-        playerhealth.text = playerSettings.CurrentHealth.ToString();
+        //playerspeed.text = playerSettings.CurrentMovementSpeed.ToString();
+        //playershoot.text = playerSettings.CurrentFireRate.ToString();
+        //playerhealth.text = playerSettings.CurrentHealth.ToString();
+        //expMultiplierText.text = playerSettings.CurrentExpMultiplier.ToString();
+        //currentExpText.text = ProgressManager.Instance.GetCurrentEXP().ToString();
+        //currentKillChhain.text = KillChainManager.Instance.GetKillChainMultiplier().ToString();
+        //currentLevel.text = ProgressManager.Instance.GetCurrentLevel().ToString();
     }
 
     private void SetMainMenu()
@@ -96,7 +122,17 @@ public class UIManager : MonoBehaviour
     private void UISetUp()
     {
         scoreText.text = "Score: " + ScoreManager.Instance.GetCurrentScore();
-        
+        waveText.text = GameManager.Instance.GetCurrentWave().ToString();
+        killChainMultiplier.text = KillChainManager.Instance.GetKillChainMultiplier().ToString();
+        currentPlayerLevel.text = ProgressManager.Instance.GetCurrentLevel().ToString();
+
+        playerHealthSlider.maxValue = PlayerSettings.Instance.CurrentMaxHealth;
+        playerHealthSlider.value = PlayerSettings.Instance.CurrentHealth;
+        playerHealthText.text = $"{(int)PlayerSettings.Instance.CurrentHealth} / {(int)PlayerSettings.Instance.CurrentMaxHealth}";
+
+        playerExpSlider.maxValue = ProgressManager.Instance.GetEXPTillNextLevel();
+        playerExpSlider.value = ProgressManager.Instance.GetCurrentEXP();
+        expValueText.text = $"EXP: {(int)ProgressManager.Instance.GetCurrentEXP()} / {(int)ProgressManager.Instance.GetEXPTillNextLevel()}";
     }
     #endregion
     #region Countdown

@@ -58,22 +58,36 @@ public class Enemy : MonoBehaviour
     }
     private void Die(bool addScore)
     {
-        if (addScore)
-        {
-            ScoreManager.Instance.AddScore(score);
-        }
-
         deathParticle.PlayFeedbacks();
         movementSpeed = 0;
 
-        PickUpSpawner.Instance.TrySpawnPickup(transform.position); // First try spawn pick up then die
+        if (addScore)
+        {
+            KillChainManager.Instance.RegisterKill();
+            PickUpSpawner.Instance.TrySpawnPickup(transform.position); // First try spawn pick up then die
+            ProgressManager.Instance.GainExp(CalculateEXP());
+        }
+        else
+        {
+            KillChainManager.Instance.CancelKillChain();
+        }
 
         Invoke(nameof(DieInvoke), 0.5f);
     }
 
+    private float CalculateEXP()
+    {
+        float baseExp = 10f;
+        float playerExpMultiplier = PlayerSettings.Instance.CurrentExpMultiplier;
+        float killChainMultiplier = KillChainManager.Instance.GetKillChainMultiplier();
+
+        float totalExp = baseExp * playerExpMultiplier * killChainMultiplier;
+
+        return totalExp;
+    }
+
     private void DieInvoke()
     {
-
         OnDeath?.Invoke();
         Destroy(gameObject);
     }
