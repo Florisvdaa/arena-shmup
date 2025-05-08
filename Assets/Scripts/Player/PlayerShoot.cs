@@ -4,38 +4,44 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
+/// <summary>
+/// Handles firing bullets based on input and fire rate.
+/// </summary>
 public class PlayerShoot : MonoBehaviour
 {
-    [Header("Shoot Settings")]
-    private Transform firePoint; // Where bullets spawn 
+    #region Private Fields
+    private Transform firePoint;
     private float fireCooldown = 0f;
-    
-    private MMF_Player shootFeedback; // Drag the MMF_Player here in Inspector
+    private MMF_Player shootFeedback;
     private PlayerSettings playerSettings;
+    #endregion
 
+    #region Unity Callbacks
     private void Start()
     {
         playerSettings = GetComponent<PlayerSettings>();
-
         firePoint = playerSettings.FirePoint;
         shootFeedback = playerSettings.ShootFeedback;
     }
+
     private void Update()
     {
-        if (GameManager.Instance.GetCanPlayerMove())
-        {
-            fireCooldown -= Time.deltaTime;
+        if (TimeManager.Instance.IsPaused) return;
+        if (!GameManager.Instance.GetCanPlayerMove()) return;
 
-            if (Mouse.current.leftButton.isPressed && fireCooldown <= 0f)
-            {
-                Shoot();
-                fireCooldown = playerSettings.CurrentFireRate;
-            }
+        fireCooldown -= Time.deltaTime;
+        if (Mouse.current.leftButton.isPressed && fireCooldown <= 0f)
+        {
+            Shoot();
+            fireCooldown = playerSettings.CurrentFireRate;
         }
     }
+    #endregion
+
+    #region Private Methods
     private void Shoot()
     {
-        GameObject bullet = BulletPool.Instance.GetBullet();
+        var bullet = BulletPool.Instance.GetBullet();
         if (bullet == null) return;
 
         bullet.transform.position = firePoint.position;
@@ -44,4 +50,5 @@ public class PlayerShoot : MonoBehaviour
 
         shootFeedback?.PlayFeedbacks();
     }
+    #endregion
 }

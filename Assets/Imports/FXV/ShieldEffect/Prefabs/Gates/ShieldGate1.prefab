@@ -89,6 +89,10 @@ PrefabInstance:
       value: 0.18396229
       objectReference: {fileID: 0}
     - target: {fileID: 1426542787418226913, guid: 650e8b71d84601340af40cbba8e49a9d, type: 3}
+      propertyPath: shieldActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1426542787418226913, guid: 650e8b71d84601340af40cbba8e49a9d, type: 3}
       propertyPath: hitAffectsColor
       value: 1
       objectReference: {fileID: 0}

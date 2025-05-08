@@ -7,88 +7,149 @@ using UnityEngine.AI;
 
 public class Enemy : MonoBehaviour
 {
+    #region Inspector Fields
     [Header("Enemy Settings")]
+    [Tooltip("Transform used for enemy visuals (e.g., model or sprite).")]
     [SerializeField] private Transform enemyVisual;
+    [Tooltip("Damage dealt to the player on contact.")]
     [SerializeField] private int damage = 1;
+    [Tooltip("Starting health of the enemy.")]
     [SerializeField] private int health = 1;
+    [Tooltip("Movement speed for NavMeshAgent.")]
     [SerializeField] private float movementSpeed = 3.5f;
+    [Tooltip("Score awarded to the player when this enemy dies.")]
     [SerializeField] private int score = 100;
+    [Tooltip("Feedback played when the enemy dies.")]
+    [SerializeField] private MMF_Player deathParticle;
+    #endregion
+
+    #region Private Fields
     private NavMeshAgent agent;
     private Transform playerTargetTransform;
+    #endregion
 
-    [SerializeField] private MMF_Player deathParticle;
+    #region Events
+    /// <summary>
+    /// Invoked when the enemy dies.
+    /// </summary>
     public event Action OnDeath;
+    #endregion
+
+    #region Unity Callbacks
+    /// <summary>
+    /// Cache components and initialize movement settings.
+    /// </summary>
     private void Awake()
     {
+        // Configure NavMeshAgent speed
         agent = GetComponent<NavMeshAgent>();
         if (agent != null)
         {
             agent.speed = movementSpeed;
         }
 
+        // Get player transform for targeting
         playerTargetTransform = GameManager.Instance.GetPlayerTransform();
     }
+
+    /// <summary>
+    /// Update is called once per frame to move toward the player.
+    /// </summary>
     private void Update()
     {
-        if (playerTargetTransform != null && agent != null)
+        // Move toward player if both agent and target exist
+        if (agent != null && playerTargetTransform != null)
         {
             agent.SetDestination(playerTargetTransform.position);
         }
     }
+
+    /// <summary>
+    /// Triggered on collider enter; applies damage to player and handles self-death.
+    /// </summary>
     private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Player"))
         {
-            PlayerHealth playerHealth = other.GetComponent<PlayerHealth>();
-            if (playerHealth != null)
-            {
-                playerHealth.TakeDamage(damage);
-            }
+            // Deal damage to player
+            var playerHealth = other.GetComponent<PlayerHealth>();
+            playerHealth?.TakeDamage(damage);
 
-            Die(false); // Die WITHOUT giving score
+            // Die without awarding score
+            Die(addScore: false);
         }
     }
+    #endregion
+
+    #region Public Methods
+    /// <summary>
+    /// Applies damage to the enemy and checks for death.
+    /// </summary>
+    /// <param name="amount">Amount of damage to apply.</param>
     public void TakeDamage(int amount)
     {
         health -= amount;
         if (health <= 0)
         {
-            Die(true); // Die WITH giving score
+            // Die and award score
+            Die(addScore: true);
         }
     }
+    #endregion
+
+    #region Private Methods
+    /// <summary>
+    /// Handles death feedback, score, pickups, and death timing.
+    /// </summary>
+    /// <param name="addScore">Whether to grant score and rewards.</param>
     private void Die(bool addScore)
     {
-        deathParticle.PlayFeedbacks();
-        movementSpeed = 0;
+        // Play death VFX
+        deathParticle?.PlayFeedbacks();
+
+        // Stop movement
+        if (agent != null)
+        {
+            agent.isStopped = true;
+        }
 
         if (addScore)
         {
+            // Track kill and spawn pickup
             KillChainManager.Instance.RegisterKill();
-            PickUpSpawner.Instance.TrySpawnPickup(transform.position); // First try spawn pick up then die
+            PickUpSpawner.Instance.TrySpawnPickup(transform.position);
+
+            // Award experience
             ProgressManager.Instance.GainExp(CalculateEXP());
         }
         else
         {
+            // Cancel any ongoing kill chain
             KillChainManager.Instance.CancelKillChain();
         }
 
+        // Delay before final destruction
         Invoke(nameof(DieInvoke), 0.5f);
     }
 
+    /// <summary>
+    /// Calculates experience awarded on this enemy's death.
+    /// </summary>
     private float CalculateEXP()
     {
         float baseExp = 10f;
-        float playerExpMultiplier = PlayerSettings.Instance.CurrentExpMultiplier;
-        float killChainMultiplier = KillChainManager.Instance.GetKillChainMultiplier();
-
-        float totalExp = baseExp * playerExpMultiplier * killChainMultiplier;
-
-        return totalExp;
+        float playerMultiplier = PlayerSettings.Instance.CurrentExpMultiplier;
+        float chainMultiplier = KillChainManager.Instance.GetKillChainMultiplier();
+        return baseExp * playerMultiplier * chainMultiplier;
     }
 
+    /// <summary>
+    /// Final cleanup: invokes death event and destroys this game object.
+    /// </summary>
     private void DieInvoke()
     {
         OnDeath?.Invoke();
         Destroy(gameObject);
     }
+    #endregion
 }

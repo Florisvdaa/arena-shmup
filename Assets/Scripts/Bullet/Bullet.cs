@@ -34,22 +34,22 @@ public class Bullet : MonoBehaviour
 
     void OnTriggerEnter(Collider other)
     {
-        Debug.Log($"[Bullet] Trigger entered with: {other.name}");
+        //Debug.Log($"[Bullet] Trigger entered with: {other.name}");
 
         if (other.CompareTag("Enemy"))
         {
-            Debug.Log("[Bullet] Hit Enemy");
+            //Debug.Log("[Bullet] Hit Enemy");
             other.GetComponent<Enemy>()?.TakeDamage(damage);
             SpawnImpact();
             ReturnToPool();
         }
         else if (other.CompareTag("Wall"))
         {
-            Debug.Log("[Bullet] Hit Wall");
+            //Debug.Log("[Bullet] Hit Wall");
             Shield shield = other.GetComponentInParent<Shield>();
             if (shield != null)
             {
-                Debug.Log("[Bullet] Hit Shield");
+                //Debug.Log("[Bullet] Hit Shield");
                 shield.OnHit(transform.position, -transform.forward, bulletHitSize, bulletHitDuration);
             }
 

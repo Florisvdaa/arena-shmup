@@ -3,79 +3,51 @@ using System.Collections.Generic;
 using MoreMountains.Feedbacks;
 using UnityEngine;
 
+/// <summary>
+/// Holds default and current player stats, handles upgrades and boosts.
+/// </summary>
 public class PlayerSettings : MonoBehaviour
 {
+    #region Singleton
     public static PlayerSettings Instance { get; private set; }
+    #endregion
 
-    [Header("Default Player Health Settings")]
-    [SerializeField] private float defaultMaxHealth = 100f;
-
-    [Header("Default Player Movement Settings")]
+    #region Inspector Fields
+    [Header("Default Player Health")]
+    [SerializeField] private float defaultMaxHealth = 10f;
+    [Header("Default Movement")]
     [SerializeField] private float defaultMovementSpeed = 5f;
     [SerializeField] private Transform playerVisualTransform;
-
-    [Header("Default Player Weapon Settings")]
+    [Header("Default Weapon")]
     [SerializeField] private Transform firePoint;
     [SerializeField] private float defaultFireRate = 0.2f;
     [SerializeField] private MMF_Player shootFeedback;
-
-    [Header("Default EXP Settings")]
+    [Header("Default EXP")]
     [SerializeField] private float defaultExpMultiplier = 1f;
-
-    [Header("Upgrade Feedback (Optional)")]
+    [Header("Upgrade Feedback")]
     [SerializeField] private MMF_Player upgradeFeedback;
+    #endregion
 
-    // Current (runtime) values
+    #region Runtime Fields & Properties
     private float currentMaxHealth;
     private float currentHealth;
     private float currentMovementSpeed;
     private float currentFireRate;
     private float currentExpMultiplier;
 
-    #region Properties
+    public float CurrentMaxHealth { get => currentMaxHealth; set => currentMaxHealth = Mathf.Max(1f, value); }
+    public float CurrentHealth { get => currentHealth; set => currentHealth = Mathf.Clamp(value, 0f, CurrentMaxHealth); }
+    public float CurrentMovementSpeed { get => currentMovementSpeed; set => currentMovementSpeed = Mathf.Max(0f, value); }
+    public float CurrentFireRate { get => currentFireRate; set => currentFireRate = Mathf.Max(0.01f, value); }
+    public float CurrentExpMultiplier { get => currentExpMultiplier; set => currentExpMultiplier = Mathf.Max(1f, value); }
 
-    // Default values
-    public float DefaultMaxHealth => defaultMaxHealth;
-    public float DefaultMovementSpeed => defaultMovementSpeed;
-    public float DefaultFireRate => defaultFireRate;
-    public float DefaultExpMultiplier => defaultExpMultiplier;
     public Transform PlayerVisualTransform => playerVisualTransform;
     public Transform FirePoint => firePoint;
     public MMF_Player ShootFeedback => shootFeedback;
-
-    // Runtime values (with validation)
-    public float CurrentMaxHealth
-    {
-        get => currentMaxHealth;
-        set => currentMaxHealth = Mathf.Max(1f, value); // now float
-    }
-
-    public float CurrentHealth
-    {
-        get => currentHealth;
-        set => currentHealth = Mathf.Clamp(value, 0f, CurrentMaxHealth);
-    }
-
-    public float CurrentMovementSpeed
-    {
-        get => currentMovementSpeed;
-        set => currentMovementSpeed = Mathf.Max(0f, value);
-    }
-
-    public float CurrentFireRate
-    {
-        get => currentFireRate;
-        set => currentFireRate = Mathf.Max(0.01f, value);
-    }
-
-    public float CurrentExpMultiplier
-    {
-        get => currentExpMultiplier;
-        set => currentExpMultiplier = Mathf.Max(1f, value);
-    }
-
+    public MMF_Player UpgradeFeedback => upgradeFeedback;
     #endregion
 
+    #region Unity Callbacks
     private void Awake()
     {
         if (Instance == null)
@@ -83,12 +55,11 @@ public class PlayerSettings : MonoBehaviour
             Instance = this;
             ResetToDefault();
         }
-        else
-        {
-            Destroy(gameObject);
-        }
+        else Destroy(gameObject);
     }
+    #endregion
 
+    #region Default Reset
     public void ResetToDefault()
     {
         CurrentMaxHealth = defaultMaxHealth;
@@ -97,59 +68,44 @@ public class PlayerSettings : MonoBehaviour
         CurrentFireRate = defaultFireRate;
         CurrentExpMultiplier = defaultExpMultiplier;
     }
+    #endregion
 
     #region Stat Upgrades
-
     public void IncreaseSpeed(float amount)
     {
         CurrentMovementSpeed += amount;
-        PlayUpgradeFeedback();
+        upgradeFeedback?.PlayFeedbacks();
     }
-
     public void IncreaseFireRate(float amount)
     {
-        CurrentFireRate -= amount;
-        PlayUpgradeFeedback();
+        CurrentFireRate = Mathf.Max(0.01f, CurrentFireRate - amount);
+        upgradeFeedback?.PlayFeedbacks();
     }
-
     public void IncreaseHealth(float amount)
     {
         CurrentMaxHealth += amount;
-        CurrentHealth = CurrentMaxHealth; // heal to full
-        PlayUpgradeFeedback();
+        CurrentHealth = CurrentMaxHealth;
+        upgradeFeedback?.PlayFeedbacks();
     }
-
     public void IncreaseExpMultiplier(float amount)
     {
         CurrentExpMultiplier += amount;
-        PlayUpgradeFeedback();
+        upgradeFeedback?.PlayFeedbacks();
     }
-
-    private void PlayUpgradeFeedback()
-    {
-        if (upgradeFeedback != null)
-        {
-            upgradeFeedback.PlayFeedbacks();
-        }
-    }
-
     #endregion
 
     #region Timed Boosts
-
     public IEnumerator SpeedBoostCoroutine(float amount, float duration)
     {
         CurrentMovementSpeed += amount;
         yield return new WaitForSeconds(duration);
         CurrentMovementSpeed -= amount;
     }
-
     public IEnumerator FireRateBoostCoroutine(float amount, float duration)
     {
         CurrentFireRate -= amount;
         yield return new WaitForSeconds(duration);
         CurrentFireRate += amount;
     }
-
     #endregion
 }
