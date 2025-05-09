@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Lofelt.NiceVibrations;
 using MoreMountains.Feedbacks;
 using UnityEngine;
 
@@ -19,6 +20,10 @@ public class FeedBackManager : MonoBehaviour
     [Header("All Feedbacks")]
     [Tooltip("Feedback to play when the player takes damage.")]
     [SerializeField] private MMF_Player playerDamageFeedback;
+    [Tooltip("UI Feedback to play when the player levels up!")]
+    [SerializeField] private MMF_Player playerUILevelUpFeedback;
+    [Tooltip("Wave indicator")]
+    [SerializeField] private MMF_Player waveIndicatorFeedback;
     #endregion
 
     #region Unity Callbacks
@@ -41,9 +46,8 @@ public class FeedBackManager : MonoBehaviour
     /// <summary>
     /// Plays the feedback associated with player damage.
     /// </summary>
-    public void PlayerDamageFeedback()
-    {
-        playerDamageFeedback?.PlayFeedbacks();
-    }
+    public void PlayerDamageFeedback() => playerDamageFeedback?.PlayFeedbacks();
+    public void PlayerUILevelUpFeedback() => playerUILevelUpFeedback?.PlayFeedbacks();
+    public void WaveIndicatorFeedback() => waveIndicatorFeedback?.PlayFeedbacks();
     #endregion
 }

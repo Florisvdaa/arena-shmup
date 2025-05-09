@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using MoreMountains.Tools;
 using UnityEngine;
 
 /// <summary>
@@ -28,6 +29,10 @@ public class ProgressManager : MonoBehaviour
 
     [Tooltip("Rate at which exp requirement grows each level.")]
     [SerializeField] private float expGrowthRate = 1.2f;
+
+    [Header("XP Bar ref")]
+    [Tooltip("Drag the MMProgressBar used for XP here")]
+    [SerializeField] private MMProgressBar xpProgressBar;
     #endregion
 
     #region Private Fields
@@ -56,6 +61,12 @@ public class ProgressManager : MonoBehaviour
             Destroy(gameObject);
 
         expToNextLevel = baseExpToLevel;
+
+        // initialize XP bar (zero fill)
+        if (xpProgressBar != null)
+        {
+            xpProgressBar.SetBar(0f, 0f, expToNextLevel);
+        }
     }
     #endregion
 
@@ -68,11 +79,18 @@ public class ProgressManager : MonoBehaviour
     {
         currentExp += amount;
         UIManager.Instance.ShowFloatingText(amount.ToString());
+        // handle one or more level-ups
         while (currentExp >= expToNextLevel)
         {
             currentExp -= expToNextLevel;
             LevelUp();
+
+            // reset bar to zero on new level
+            xpProgressBar?.UpdateBar(0f, 0f, expToNextLevel);
         }
+
+        // finally, update the XP bar to current progress
+        xpProgressBar?.UpdateBar(currentExp, 0f, expToNextLevel);
     }
 
     /// <summary>
@@ -80,8 +98,7 @@ public class ProgressManager : MonoBehaviour
     /// </summary>
     public void UpgradeConsumed()
     {
-        if (availableUpgrades <= 0)
-            return;
+        if (availableUpgrades <= 0) return;
         availableUpgrades--;
         OnUpgradeAvailabilityChanged?.Invoke(availableUpgrades > 0);
     }
@@ -93,6 +110,7 @@ public class ProgressManager : MonoBehaviour
     /// </summary>
     private void LevelUp()
     {
+        FeedBackManager.Instance.PlayerUILevelUpFeedback();
         currentLevel++;
         expToNextLevel *= expGrowthRate;
         availableUpgrades++;

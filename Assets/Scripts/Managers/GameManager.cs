@@ -130,6 +130,8 @@ public class GameManager : MonoBehaviour
             yield return new WaitForSeconds(1f);
         }
 
+        FeedBackManager.Instance.WaveIndicatorFeedback();
+
         canPlayerMove = true;
         UIManager.Instance.HideCountdownText();
         UIManager.Instance.SetGameUI();

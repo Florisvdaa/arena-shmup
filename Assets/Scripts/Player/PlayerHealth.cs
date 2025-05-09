@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Lofelt.NiceVibrations;
 using UnityEngine;
 
 /// <summary>
@@ -18,12 +19,12 @@ public class PlayerHealth : MonoBehaviour
         if (playerSettings == null)
             Debug.LogError("Missing PlayerSettings on Player!");
 
-        playerSettings.CurrentHealth = playerSettings.CurrentMaxHealth;
+        //playerSettings.CurrentHealth = playerSettings.CurrentMaxHealth;
     }
     #endregion
 
     #region Public Methods
-    public void TakeDamage(int amount)
+    public void TakeDamage(float amount)
     {
         FeedBackManager.Instance.PlayerDamageFeedback();
         playerSettings.CurrentHealth -= amount;

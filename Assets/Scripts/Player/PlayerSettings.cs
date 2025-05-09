@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
+//using Lofelt.NiceVibrations;
 using MoreMountains.Feedbacks;
+using MoreMountains.Tools;
 using UnityEngine;
 
 /// <summary>
@@ -26,6 +28,8 @@ public class PlayerSettings : MonoBehaviour
     [SerializeField] private float defaultExpMultiplier = 1f;
     [Header("Upgrade Feedback")]
     [SerializeField] private MMF_Player upgradeFeedback;
+    [Header("HealthBar ref")]
+    [SerializeField] private MMProgressBar progressBar;
     #endregion
 
     #region Runtime Fields & Properties
@@ -36,7 +40,23 @@ public class PlayerSettings : MonoBehaviour
     private float currentExpMultiplier;
 
     public float CurrentMaxHealth { get => currentMaxHealth; set => currentMaxHealth = Mathf.Max(1f, value); }
-    public float CurrentHealth { get => currentHealth; set => currentHealth = Mathf.Clamp(value, 0f, CurrentMaxHealth); }
+    public float CurrentHealth 
+    {
+        get => currentHealth; 
+        set  /*=> currentHealth = Mathf.Clamp(value, 0f, CurrentMaxHealth);*/
+        {
+            // clamp
+            currentHealth = Mathf.Clamp(value, 0f, CurrentMaxHealth);
+            // drive the bar
+            if (progressBar != null)
+            {
+                progressBar.UpdateBar(currentHealth, 0f, CurrentMaxHealth);
+                // or, if you prefer to hand it a normalized 0–1 value:
+                // float n = currentHealth / CurrentMaxHealth;
+                // progressBar.UpdateBar01(n);
+            }
+        }
+    }
     public float CurrentMovementSpeed { get => currentMovementSpeed; set => currentMovementSpeed = Mathf.Max(0f, value); }
     public float CurrentFireRate { get => currentFireRate; set => currentFireRate = Mathf.Max(0.01f, value); }
     public float CurrentExpMultiplier { get => currentExpMultiplier; set => currentExpMultiplier = Mathf.Max(1f, value); }

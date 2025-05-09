@@ -568,7 +568,6 @@ namespace MoreMountains.Tools
 			newProgress = Mathf.Clamp(newProgress, 0f, 1f);
 			UpdateBar01(newProgress);
 		}
-
 		/// <summary>
 		/// Test method - increases the bar's current value by 20%
 		/// </summary>

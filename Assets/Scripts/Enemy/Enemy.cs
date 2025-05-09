@@ -28,6 +28,17 @@ public class Enemy : MonoBehaviour
     private Transform playerTargetTransform;
     #endregion
 
+    #region Public Properties
+    /// <summary>
+    /// Exposes the serialized "damage" field so other scripts can read/write it.
+    /// </summary>
+    public int Damage
+    {
+        get => damage;
+        set => damage = value;
+    }
+    #endregion
+
     #region Events
     /// <summary>
     /// Invoked when the enemy dies.

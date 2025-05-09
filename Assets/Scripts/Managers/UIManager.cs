@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using MoreMountains.Feedbacks;
+using MoreMountains.Tools;
 using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem.LowLevel;
@@ -120,15 +121,15 @@ public class UIManager : MonoBehaviour
         scoreText.text = "Score: " + ScoreManager.Instance.GetCurrentScore();
         waveText.text = GameManager.Instance.GetCurrentWave().ToString();
         killChainMultiplier.text = KillChainManager.Instance.GetKillChainMultiplier() + "X";
-        currentPlayerLevel.text = ProgressManager.Instance.GetCurrentLevel().ToString();
+        currentPlayerLevel.text = "LVL:" + ProgressManager.Instance.GetCurrentLevel().ToString();
 
-        playerHealthSlider.maxValue = PlayerSettings.Instance.CurrentMaxHealth;
-        playerHealthSlider.value = PlayerSettings.Instance.CurrentHealth;
-        playerHealthText.text = $"HP: {(int)PlayerSettings.Instance.CurrentHealth} / {(int)PlayerSettings.Instance.CurrentMaxHealth}";
+        //playerHealthSlider.maxValue = PlayerSettings.Instance.CurrentMaxHealth;
+        //playerHealthSlider.value = PlayerSettings.Instance.CurrentHealth;
+        //playerHealthText.text = $"HP: {(int)PlayerSettings.Instance.CurrentHealth} / {(int)PlayerSettings.Instance.CurrentMaxHealth}";
 
-        playerExpSlider.maxValue = ProgressManager.Instance.GetEXPTillNextLevel();
-        playerExpSlider.value = ProgressManager.Instance.GetCurrentEXP();
-        expValueText.text = $"EXP: {(int)ProgressManager.Instance.GetCurrentEXP()} / {(int)ProgressManager.Instance.GetEXPTillNextLevel()}";
+        //playerExpSlider.maxValue = ProgressManager.Instance.GetEXPTillNextLevel();
+        //playerExpSlider.value = ProgressManager.Instance.GetCurrentEXP();
+        //expValueText.text = $"EXP: {(int)ProgressManager.Instance.GetCurrentEXP()} / {(int)ProgressManager.Instance.GetEXPTillNextLevel()}";
     }
     #endregion
 
@@ -163,15 +164,15 @@ public class UIManager : MonoBehaviour
         scoreText.text = "Score: " + ScoreManager.Instance.GetCurrentScore();
         waveText.text = GameManager.Instance.GetCurrentWave().ToString();
         killChainMultiplier.text = KillChainManager.Instance.GetKillChainMultiplier().ToString();
-        currentPlayerLevel.text = ProgressManager.Instance.GetCurrentLevel().ToString();
+        currentPlayerLevel.text = "LVL:" + ProgressManager.Instance.GetCurrentLevel().ToString();
 
-        playerHealthSlider.maxValue = PlayerSettings.Instance.CurrentMaxHealth;
-        playerHealthSlider.value = PlayerSettings.Instance.CurrentHealth;
-        playerHealthText.text = $"HP: {(int)PlayerSettings.Instance.CurrentHealth} / {(int)PlayerSettings.Instance.CurrentMaxHealth}";
+        //playerHealthSlider.maxValue = PlayerSettings.Instance.CurrentMaxHealth;
+        //playerHealthSlider.value = PlayerSettings.Instance.CurrentHealth;
+        //playerHealthText.text = $"HP: {(int)PlayerSettings.Instance.CurrentHealth} / {(int)PlayerSettings.Instance.CurrentMaxHealth}";
 
-        playerExpSlider.maxValue = ProgressManager.Instance.GetEXPTillNextLevel();
-        playerExpSlider.value = ProgressManager.Instance.GetCurrentEXP();
-        expValueText.text = $"EXP: {(int)ProgressManager.Instance.GetCurrentEXP()} / {(int)ProgressManager.Instance.GetEXPTillNextLevel()}";
+        //playerExpSlider.maxValue = ProgressManager.Instance.GetEXPTillNextLevel();
+        //playerExpSlider.value = ProgressManager.Instance.GetCurrentEXP();
+        //expValueText.text = $"EXP: {(int)ProgressManager.Instance.GetCurrentEXP()} / {(int)ProgressManager.Instance.GetEXPTillNextLevel()}";
     }
     #endregion
 
