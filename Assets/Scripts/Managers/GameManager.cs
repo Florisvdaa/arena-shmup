@@ -105,30 +105,38 @@ public class GameManager : MonoBehaviour
     /// </summary>
     private IEnumerator GameStartCountdown()
     {
-        yield return new WaitForSeconds(0.5f);
+        canPlayerMove = false;
 
-        // Lerp player to start position
-        float lerpDuration = 2f;
-        float elapsedTime = 0f;
-        Vector3 startPos = player.transform.position;
-        Vector3 targetPos = playerStartPosition.position;
+        yield return new WaitForSeconds(1);
 
-        while (elapsedTime < lerpDuration)
-        {
-            player.transform.position = Vector3.Lerp(startPos, targetPos, elapsedTime / lerpDuration);
-            elapsedTime += Time.deltaTime;
-            yield return null;
-        }
+        FeedBackManager.Instance.PlayCountDownFeedback();
 
-        player.transform.position = targetPos;
+        yield return new WaitWhile(() => FeedBackManager.Instance.CountDownPlayer().IsPlaying);
 
-        // Countdown display
-        string[] sequence = { "3", "2", "1", "GOOO!" };
-        foreach (string s in sequence)
-        {
-            UIManager.Instance.ShowCountdownText(s);
-            yield return new WaitForSeconds(1f);
-        }
+        //yield return new WaitForSeconds(0.5f);
+        yield return new WaitForEndOfFrame();
+        //// Lerp player to start position
+        //float lerpDuration = 2f;
+        //float elapsedTime = 0f;
+        //Vector3 startPos = player.transform.position;
+        //Vector3 targetPos = playerStartPosition.position;
+
+        //while (elapsedTime < lerpDuration)
+        //{
+        //    player.transform.position = Vector3.Lerp(startPos, targetPos, elapsedTime / lerpDuration);
+        //    elapsedTime += Time.deltaTime;
+        //    yield return null;
+        //}
+
+        //player.transform.position = targetPos;
+
+        //// Countdown display
+        //string[] sequence = { "3", "2", "1", "GOOO!" };
+        //foreach (string s in sequence)
+        //{
+        //    UIManager.Instance.ShowCountdownText(s);
+        //    yield return new WaitForSeconds(1f);
+        //}
 
         FeedBackManager.Instance.WaveIndicatorFeedback();
 
