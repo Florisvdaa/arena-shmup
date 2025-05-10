@@ -212,6 +212,32 @@ public class Player : MonoBehaviour
         float roll = -lat * headTiltAngle;
         headPivot.localRotation = headInitialLocalRotation
                                  * Quaternion.Euler(pitch, 0f, roll);
+
+        //if (headPivot == null || mainCam == null) return;
+        //// camera forward/right axes
+        //Vector3 camF = mainCam.transform.forward; camF.y = 0; camF.Normalize();
+        //Vector3 camR = mainCam.transform.right; camR.y = 0; camR.Normalize();
+
+        //// movement components
+        //float moveFwd = Vector3.Dot(currentMoveDir, camF);
+        //float moveLat = Vector3.Dot(currentMoveDir, camR);
+
+        //// look direction forward
+        //Vector3 lookDir = headVisual != null
+        //    ? headVisual.forward
+        //    : transform.forward;
+        //lookDir.y = 0;
+        //lookDir.Normalize();
+        //float lookFwd = Vector3.Dot(lookDir, camF);
+
+        //// compute pitch and roll
+        //float movePitch = -moveFwd * headTiltAngle;
+        //float lookPitch = lookFwd * headTiltAngle;
+        //float pitch = movePitch + lookPitch;
+        //float roll = -moveLat * headTiltAngle;
+
+        //headPivot.localRotation = headInitialLocalRotation
+        //                         * Quaternion.Euler(pitch, 0f, roll);
     }
     #endregion
 
