@@ -26,6 +26,8 @@ public class FeedBackManager : MonoBehaviour
     [SerializeField] private MMF_Player waveIndicatorFeedback;
     [Tooltip("Count Down Feedback")]
     [SerializeField] private MMF_Player countDownFeedback;
+    [Tooltip("Player teleport Feedback")]
+    [SerializeField] private MMF_Player playerTeleportStartPosFeedback;
     #endregion
 
     #region Unity Callbacks
@@ -53,5 +55,6 @@ public class FeedBackManager : MonoBehaviour
     public void WaveIndicatorFeedback() => waveIndicatorFeedback?.PlayFeedbacks();
     public void PlayCountDownFeedback() => countDownFeedback?.PlayFeedbacks();
     public MMF_Player CountDownPlayer() { return countDownFeedback; }
+    public void PlayTeleportToStartPosFeedback() => playerTeleportStartPosFeedback?.PlayFeedbacks();
     #endregion
 }

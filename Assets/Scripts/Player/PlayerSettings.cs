@@ -9,38 +9,25 @@ using UnityEngine;
 /// Holds default and current player stats, handles upgrades and boosts.
 /// </summary>
 public class PlayerSettings : MonoBehaviour
-{
+{ 
     #region Singleton
     public static PlayerSettings Instance { get; private set; }
     #endregion
 
     #region Inspector Fields
-    [Header("Visual Transforms")]
-    [Tooltip("Sphere mesh that rolls around.")]
-    [SerializeField] private Transform bodyVisualTransform;
-    [Tooltip("Pivot used for head tilt.")]
-    [SerializeField] private Transform headPivotTransform;
-    [Tooltip("Actual head mesh that looks at the cursor.")]
-    [SerializeField] private Transform headVisualTransform;
-
     [Header("Default Player Health")]
     [SerializeField] private float defaultMaxHealth = 10f;
-
     [Header("Default Movement")]
     [SerializeField] private float defaultMovementSpeed = 5f;
     [SerializeField] private Transform playerVisualTransform;
-
     [Header("Default Weapon")]
     [SerializeField] private Transform firePoint;
     [SerializeField] private float defaultFireRate = 0.2f;
     [SerializeField] private MMF_Player shootFeedback;
-
     [Header("Default EXP")]
     [SerializeField] private float defaultExpMultiplier = 1f;
-
     [Header("Upgrade Feedback")]
     [SerializeField] private MMF_Player upgradeFeedback;
-
     [Header("HealthBar ref")]
     [SerializeField] private MMProgressBar progressBar;
     #endregion
@@ -53,9 +40,9 @@ public class PlayerSettings : MonoBehaviour
     private float currentExpMultiplier;
 
     public float CurrentMaxHealth { get => currentMaxHealth; set => currentMaxHealth = Mathf.Max(1f, value); }
-    public float CurrentHealth 
+    public float CurrentHealth
     {
-        get => currentHealth; 
+        get => currentHealth;
         set  /*=> currentHealth = Mathf.Clamp(value, 0f, CurrentMaxHealth);*/
         {
             // clamp
@@ -74,9 +61,7 @@ public class PlayerSettings : MonoBehaviour
     public float CurrentFireRate { get => currentFireRate; set => currentFireRate = Mathf.Max(0.01f, value); }
     public float CurrentExpMultiplier { get => currentExpMultiplier; set => currentExpMultiplier = Mathf.Max(1f, value); }
 
-    public Transform BodyVisualTransform => bodyVisualTransform;
-    public Transform HeadPivotTransform => headPivotTransform;
-    public Transform HeadVisualTransform => headVisualTransform;
+    public Transform PlayerVisualTransform => playerVisualTransform;
     public Transform FirePoint => firePoint;
     public MMF_Player ShootFeedback => shootFeedback;
     public MMF_Player UpgradeFeedback => upgradeFeedback;

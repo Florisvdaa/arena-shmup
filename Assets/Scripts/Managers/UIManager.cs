@@ -284,7 +284,8 @@ public class UIManager : MonoBehaviour
     public void HideUpgradeMenu()
     {
         upgradeParent.SetActive(false);
-        TimeManager.Instance.ResumeGame();
+        GameManager.Instance.PlayerReadyForNextWave();
+        //TimeManager.Instance.ResumeGame();
     }
     #endregion
 

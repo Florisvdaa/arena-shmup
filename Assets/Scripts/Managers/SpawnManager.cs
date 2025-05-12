@@ -9,89 +9,103 @@ public class SpawnManager : MonoBehaviour
     public static SpawnManager Instance { get; private set; }
     #endregion
 
-    #region Fields
     [Header("Spawn Settings")]
-    [Tooltip("List of spawn points for enemies.")]
+    [Tooltip("Where pixel effects (and later enemies) can appear.")]
     [SerializeField] private List<Transform> spawnTransformList = new List<Transform>();
-    [Tooltip("Prefab to use for the final enemy object.")]
-    [SerializeField] private GameObject enemyPrefab;
-    [Tooltip("Prefab used for pixel charge effect.")]
-    [SerializeField] private GameObject pixelEffectPrefab;
-    [Tooltip("Time between each spawn in seconds.")]
-    [SerializeField] private float spawnInterval = 1.0f;
-    [Tooltip("Number of enemies remaining alive in the current wave.")]
-    [SerializeField] private int enemiesAlive;
-    private int enemiesToSpawn;
-    #endregion
 
-    #region Unity Callbacks
-    /// <summary>
-    /// Initialize singleton instance or destroy duplicates.
-    /// </summary>
+    [Tooltip("Spawn interval between pixel effects (sec).")]
+    [SerializeField] private float spawnInterval = 1f;
+
+    [Tooltip("All your different PixelEffectController prefabs (red/blue/green/etc).")]
+    [SerializeField] private List<GameObject> pixelEffectPrefabs = new List<GameObject>();
+
+    private Coroutine spawnRoutine;
+    private List<Enemy> activeEnemies = new List<Enemy>();
+    private int killsThisWave;
+
     private void Awake()
     {
-        if (Instance != null && Instance != this)
+        if (Instance != null && Instance != this) Destroy(gameObject);
+        else
         {
-            Destroy(gameObject);
-            return;
+            Instance = this;
+            DontDestroyOnLoad(gameObject);
         }
-        Instance = this;
-        DontDestroyOnLoad(gameObject);
-    }
-    #endregion
-
-    #region Public Methods
-    /// <summary>
-    /// Starts a new wave by setting counters and spawning pixel effects.
-    /// </summary>
-    /// <param name="count">Total number of enemies in this wave.</param>
-    public void StartWave(int count)
-    {
-        enemiesToSpawn = count;
-        enemiesAlive = count;
-        StartCoroutine(SpawnWave());
     }
 
     /// <summary>
-    /// Registers an enemy instance to call back on death.
+    /// Called by GameManager with 1-based wave number.
     /// </summary>
-    /// <param name="enemy">The enemy instance to register.</param>
-    public void RegisterInstance(Enemy enemy)
+    public void StartWave(int waveNumber)
     {
-        enemy.OnDeath += EnemyDied;
-    }
-    #endregion
+        // reset state
+        if (spawnRoutine != null) StopCoroutine(spawnRoutine);
+        foreach (var e in activeEnemies) if (e != null) Destroy(e.gameObject);
+        activeEnemies.Clear();
+        killsThisWave = 0;
 
-    #region Private Methods
-    /// <summary>
-    /// Coroutine that spawns pixel effect prefabs at random spawn points.
-    /// </summary>
-    private IEnumerator SpawnWave()
+        // compute duration: wave 1 = 10–20s, wave 2 = 20–30s, etc.
+        float minTime = waveNumber * 10f;
+        float maxTime = waveNumber * 10f + 10f;
+        float duration = Random.Range(minTime, maxTime);
+
+        Debug.Log("Current wave duration: " + duration);
+
+        spawnRoutine = StartCoroutine(SpawnWave(duration));
+    }
+
+    private IEnumerator SpawnWave(float duration)
     {
-        for (int i = 0; i < enemiesToSpawn; i++)
+        float elapsed = 0f;
+        while (elapsed < duration)
         {
-            // Select a random spawn point
-            var spawnPoint = spawnTransformList[Random.Range(0, spawnTransformList.Count)];
+            // choose a random spawn point & effect prefab
+            var spawnPt = spawnTransformList[Random.Range(0, spawnTransformList.Count)];
+            var fxPrefab = pixelEffectPrefabs[Random.Range(0, pixelEffectPrefabs.Count)];
 
-            // Instantiate the pixel effect for charging visualization
-            var fx = Instantiate(pixelEffectPrefab, spawnPoint.position, spawnPoint.rotation);
+            // instantiate the effect (it'll call RegisterInstance when it spawns its enemy)
+            var fx = Instantiate(fxPrefab, spawnPt.position, spawnPt.rotation);
             fx.GetComponent<PixelEffectController>().Init(this);
 
-            // Wait before spawning next effect
+            // wait and advance timer
             yield return new WaitForSeconds(spawnInterval);
+            elapsed += spawnInterval;
         }
+
+        EndCurrentWave();
     }
 
     /// <summary>
-    /// Callback invoked when a registered enemy dies; tracks wave completion.
+    /// PixelEffectController calls this once its actual enemy prefab has been instantiated.
     /// </summary>
-    private void EnemyDied()
+    public void RegisterInstance(Enemy enemy)
     {
-        enemiesAlive--;
-        if (enemiesAlive <= 0)
-        {
-            GameManager.Instance.OnWaveComplete();
-        }
+        activeEnemies.Add(enemy);
+        // capture in closure so we know which one died
+        Enemy e = enemy;
+        e.OnDeath += () => OnEnemyDeath(e);
     }
-    #endregion
+
+    private void OnEnemyDeath(Enemy e)
+    {
+        killsThisWave++;
+        activeEnemies.Remove(e);
+        // no GameManager.OnWaveComplete here—wave ends by time, not count
+    }
+
+    private void EndCurrentWave()
+    {
+        // stop spawning further effects
+        if (spawnRoutine != null) StopCoroutine(spawnRoutine);
+
+        // destroy any survivors without firing their death callbacks
+        foreach (var e in activeEnemies)
+            if (e != null) Destroy(e.gameObject);
+        activeEnemies.Clear();
+
+        // pass stats back to the GameManager & trigger completion
+        GameManager.Instance.LastWaveKills = killsThisWave;
+        Debug.Log("Enemies Killed this wave: " + killsThisWave);
+        GameManager.Instance.OnWaveComplete();
+    }
 }

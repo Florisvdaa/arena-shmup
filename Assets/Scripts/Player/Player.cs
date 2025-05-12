@@ -7,31 +7,18 @@ using UnityEngine.InputSystem;
 /// Handles player movement, rotation, upgrade input, and interaction with game state.
 /// </summary>
 public class Player : MonoBehaviour
-{
+{ 
     #region Inspector Fields
     [Header("Movement Settings")]
     [Tooltip("Duration required to hold the upgrade input before opening the upgrade UI.")]
     [SerializeField] private float upgradeHoldDuration = 1.5f;
-
-    [Tooltip("Radius of your sphere mesh (world units).")]
-    [SerializeField] private float sphereRadius = 0.5f;
-    [Tooltip("Time it takes to smooth movement direction (sec). Lower = snappier.")]
-    [SerializeField] private float moveSmoothTime = 0.1f;
-
-    [Header("Head Tilt Settings")]
-    [Tooltip("Maximum head tilt angle (degrees).")]
-    [SerializeField] private float headTiltAngle = 10f;
     #endregion
 
     #region Private Fields
     private Vector2 moveInput;
-    private Vector3 currentMoveDir;
-    private Vector3 moveDirVelocity;
     private Rigidbody rb;
-    private Transform bodyVisual;
-    private Transform headPivot;
-    private Transform headVisual;
-    private Quaternion headInitialLocalRotation;
+    private Transform playerVisual;
+
     private Camera mainCam;
     private PlayerInputActions inputActions;
     private PlayerSettings playerSettings;
@@ -59,16 +46,7 @@ public class Player : MonoBehaviour
         inputActions.player.Upgrade.performed += OnUpgradePerformed;
         inputActions.player.Upgrade.canceled += OnUpgradeCanceled;
 
-        //playerVisual = playerSettings.PlayerVisualTransform;
-        // fetch visuals from PlayerSettings
-        var settings = PlayerSettings.Instance;
-        bodyVisual = settings.BodyVisualTransform;
-        headPivot = settings.HeadPivotTransform;
-        headVisual = settings.HeadVisualTransform;
-
-        headInitialLocalRotation = headPivot != null
-            ? headPivot.localRotation
-            : Quaternion.identity;
+        playerVisual = playerSettings.PlayerVisualTransform;
     }
 
     /// <summary>
@@ -108,12 +86,8 @@ public class Player : MonoBehaviour
         if (!GameManager.Instance.GetCanPlayerMove()) return;
         if (TimeManager.Instance.IsPaused) return;
 
-        MoveAndRollBody();
-        TiltHeadBasedOnMovement();
-        RotateHeadVisualTowardsMouse();
-
-        //HandleMovement();
-        //RotateVisualTowardsMouse();
+        HandleMovement();
+        RotateVisualTowardsMouse();
     }
     #endregion
 
@@ -140,123 +114,28 @@ public class Player : MonoBehaviour
     #endregion
 
     #region Movement & Rotation
-    //private void HandleMovement()
-    //{
-    //    Vector3 movement = new Vector3(moveInput.x, 0f, moveInput.y).normalized;
-    //    float dt = Time.unscaledDeltaTime;
-    //    rb.MovePosition(rb.position + movement * playerSettings.CurrentMovementSpeed * dt);
-    //}
-
-    //private void RotateVisualTowardsMouse()
-    //{
-    //    if (playerVisual == null || mainCam == null) return;
-
-    //    Ray ray = mainCam.ScreenPointToRay(Mouse.current.position.ReadValue());
-    //    Plane groundPlane = new Plane(Vector3.up, Vector3.zero);
-    //    if (groundPlane.Raycast(ray, out float enter))
-    //    {
-    //        Vector3 hit = ray.GetPoint(enter);
-    //        Vector3 dir = hit - playerVisual.position;
-    //        dir.y = 0f;
-    //        if (dir.sqrMagnitude > 0.01f)
-    //            playerVisual.rotation = Quaternion.LookRotation(dir);
-    //    }
-    //}
-    #region Movement & Rolling
-    private void MoveAndRollBody()
+    private void HandleMovement()
     {
-        // 1) compute camera-relative desired dir on XZ
-        Vector3 input = new Vector3(moveInput.x, 0f, moveInput.y);
-        Vector3 desiredDir = Vector3.zero;
-        if (input.sqrMagnitude >= 0.01f)
-        {
-            Vector3 camF = mainCam.transform.forward; camF.y = 0; camF.Normalize();
-            Vector3 camR = mainCam.transform.right; camR.y = 0; camR.Normalize();
-            desiredDir = (camF * input.z + camR * input.x).normalized;
-        }
-
-        // 2) smooth
-        currentMoveDir = Vector3.SmoothDamp(
-            currentMoveDir,
-            desiredDir,
-            ref moveDirVelocity,
-            moveSmoothTime
-        );
-
-        // 3) apply to rb
-        float speed = PlayerSettings.Instance.CurrentMovementSpeed;
-        Vector3 vel = currentMoveDir * speed;
-        vel.y = rb.velocity.y;
-        rb.velocity = vel;
-
-        // 4) roll bodyVisual
-        if (bodyVisual != null && currentMoveDir.sqrMagnitude > 0.001f)
-        {
-            float dist = speed * Time.fixedDeltaTime;
-            float angleDeg = dist / sphereRadius * Mathf.Rad2Deg;
-            Vector3 axis = Vector3.Cross(Vector3.up, currentMoveDir).normalized;
-            bodyVisual.Rotate(axis, angleDeg, Space.World);
-        }
+        Vector3 movement = new Vector3(moveInput.x, 0f, moveInput.y).normalized;
+        float dt = Time.unscaledDeltaTime;
+        rb.MovePosition(rb.position + movement * playerSettings.CurrentMovementSpeed * dt);
     }
-    #endregion
 
-    #region Head Tilt
-    private void TiltHeadBasedOnMovement()
+    private void RotateVisualTowardsMouse()
     {
-        if (headPivot == null) return;
-        Vector3 camF = mainCam.transform.forward; camF.y = 0; camF.Normalize();
-        Vector3 camR = mainCam.transform.right; camR.y = 0; camR.Normalize();
-        float fwd = Vector3.Dot(currentMoveDir, camF);
-        float lat = Vector3.Dot(currentMoveDir, camR);
-        float pitch = -fwd * headTiltAngle;
-        float roll = -lat * headTiltAngle;
-        headPivot.localRotation = headInitialLocalRotation
-                                 * Quaternion.Euler(pitch, 0f, roll);
+        if (playerVisual == null || mainCam == null) return;
 
-        //if (headPivot == null || mainCam == null) return;
-        //// camera forward/right axes
-        //Vector3 camF = mainCam.transform.forward; camF.y = 0; camF.Normalize();
-        //Vector3 camR = mainCam.transform.right; camR.y = 0; camR.Normalize();
-
-        //// movement components
-        //float moveFwd = Vector3.Dot(currentMoveDir, camF);
-        //float moveLat = Vector3.Dot(currentMoveDir, camR);
-
-        //// look direction forward
-        //Vector3 lookDir = headVisual != null
-        //    ? headVisual.forward
-        //    : transform.forward;
-        //lookDir.y = 0;
-        //lookDir.Normalize();
-        //float lookFwd = Vector3.Dot(lookDir, camF);
-
-        //// compute pitch and roll
-        //float movePitch = -moveFwd * headTiltAngle;
-        //float lookPitch = lookFwd * headTiltAngle;
-        //float pitch = movePitch + lookPitch;
-        //float roll = -moveLat * headTiltAngle;
-
-        //headPivot.localRotation = headInitialLocalRotation
-        //                         * Quaternion.Euler(pitch, 0f, roll);
-    }
-    #endregion
-
-    #region Head Look-At
-    private void RotateHeadVisualTowardsMouse()
-    {
-        if (headVisual == null || mainCam == null) return;
         Ray ray = mainCam.ScreenPointToRay(Mouse.current.position.ReadValue());
-        Plane ground = new Plane(Vector3.up, Vector3.zero);
-        if (ground.Raycast(ray, out float enter))
+        Plane groundPlane = new Plane(Vector3.up, Vector3.zero);
+        if (groundPlane.Raycast(ray, out float enter))
         {
             Vector3 hit = ray.GetPoint(enter);
-            Vector3 dir = hit - headVisual.position;
+            Vector3 dir = hit - playerVisual.position;
             dir.y = 0f;
             if (dir.sqrMagnitude > 0.01f)
-                headVisual.rotation = Quaternion.LookRotation(dir, Vector3.up);
+                playerVisual.rotation = Quaternion.LookRotation(dir);
         }
     }
-    #endregion
     #endregion
 
     #region Upgrade
@@ -266,3 +145,4 @@ public class Player : MonoBehaviour
     }
     #endregion
 }
+

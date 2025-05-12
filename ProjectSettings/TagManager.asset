@@ -44,6 +44,9 @@ TagManager:
   - name: Default
     uniqueID: 0
     locked: 0
+  - name: Laser
+    uniqueID: 2948374273
+    locked: 0
   - name: UI
     uniqueID: 3124387511
     locked: 0

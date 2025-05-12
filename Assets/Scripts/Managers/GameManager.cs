@@ -8,9 +8,6 @@ using UnityEngine;
 public class GameManager : MonoBehaviour
 {
     #region Singleton
-    /// <summary>
-    /// Global access point for the GameManager.
-    /// </summary>
     public static GameManager Instance { get; private set; }
     #endregion
 
@@ -20,48 +17,21 @@ public class GameManager : MonoBehaviour
     [SerializeField] private GameObject player;
     [Tooltip("Transform where the player is tracked during gameplay.")]
     [SerializeField] private Transform currentPlayerTransform;
-    [Tooltip("Starting position for the player at game start.")]
+    [Tooltip("Starting position for the player at game start or new wave.")]
     [SerializeField] private Transform playerStartPosition;
-
-    [Header("Wave Info")]
-    [Tooltip("Base number of enemies in the first wave.")]
-    [SerializeField] private int baseEnemiesPerWave = 5;
     #endregion
 
     #region Private Fields
     private int currentWave = 0;
-    private bool canPlayerMove = false;
+    private bool canPlayerMove;
     #endregion
 
-    #region Unity Callbacks
+    #region Public API
     /// <summary>
-    /// Initialize singleton instance or destroy duplicates.
+    /// How many enemies the player actually killed in the last wave.
     /// </summary>
-    private void Awake()
-    {
-        if (Instance != null && Instance != this)
-        {
-            Destroy(gameObject);
-        }
-        else
-        {
-            Instance = this;
-        }
-    }
+    public int LastWaveKills { get; internal set; }
 
-    /// <summary>
-    /// Update player tracking transform every frame.
-    /// </summary>
-    private void Update()
-    {
-        currentPlayerTransform.position = player.transform.position;
-    }
-    #endregion
-
-    #region Public Methods
-    /// <summary>
-    /// Begins game start sequence: hides menu, sets camera, and starts countdown.
-    /// </summary>
     public void StartGame()
     {
         UIManager.Instance.UnsetMainMenu();
@@ -69,28 +39,19 @@ public class GameManager : MonoBehaviour
         StartCoroutine(GameStartCountdown());
     }
 
-    /// <summary>
-    /// Initiates the next enemy wave with scaled enemy count.
-    /// </summary>
     public void StartNextWave()
     {
         currentWave++;
-        int enemiesThisWave = baseEnemiesPerWave + (currentWave - 1) * 2;
-        SpawnManager.Instance.StartWave(100); // DEBUG
-        //SpawnManager.Instance.StartWave(enemiesThisWave);
+        SpawnManager.Instance.StartWave(currentWave);
+        canPlayerMove = true;
     }
 
-    /// <summary>
-    /// Called when all enemies in the current wave die; triggers completion sequence.
-    /// </summary>
     public void OnWaveComplete()
     {
+        canPlayerMove = false;
         StartCoroutine(OnWaveCompleteCoroutine());
     }
 
-    /// <summary>
-    /// Called after upgrade UI; restarts countdown and wave.
-    /// </summary>
     public void PlayerReadyForNextWave()
     {
         UIManager.Instance.HideUpgradeUI();
@@ -99,81 +60,48 @@ public class GameManager : MonoBehaviour
     }
     #endregion
 
-    #region Countdown Sequence
-    /// <summary>
-    /// Handles player repositioning and countdown before wave starts.
-    /// </summary>
+    #region Countdown / Completion
     private IEnumerator GameStartCountdown()
     {
+        //ResetPlayerPosition();
+        FeedBackManager.Instance.PlayTeleportToStartPosFeedback();
+
         canPlayerMove = false;
-
-        yield return new WaitForSeconds(1);
-
+        yield return new WaitForSeconds(1f);
         FeedBackManager.Instance.PlayCountDownFeedback();
-
         yield return new WaitWhile(() => FeedBackManager.Instance.CountDownPlayer().IsPlaying);
-
-        //yield return new WaitForSeconds(0.5f);
         yield return new WaitForEndOfFrame();
-        //// Lerp player to start position
-        //float lerpDuration = 2f;
-        //float elapsedTime = 0f;
-        //Vector3 startPos = player.transform.position;
-        //Vector3 targetPos = playerStartPosition.position;
-
-        //while (elapsedTime < lerpDuration)
-        //{
-        //    player.transform.position = Vector3.Lerp(startPos, targetPos, elapsedTime / lerpDuration);
-        //    elapsedTime += Time.deltaTime;
-        //    yield return null;
-        //}
-
-        //player.transform.position = targetPos;
-
-        //// Countdown display
-        //string[] sequence = { "3", "2", "1", "GOOO!" };
-        //foreach (string s in sequence)
-        //{
-        //    UIManager.Instance.ShowCountdownText(s);
-        //    yield return new WaitForSeconds(1f);
-        //}
-
         FeedBackManager.Instance.WaveIndicatorFeedback();
 
-        canPlayerMove = true;
         UIManager.Instance.HideCountdownText();
         UIManager.Instance.SetGameUI();
         StartNextWave();
     }
-    #endregion
 
-    #region Wave Completion Sequence
-    /// <summary>
-    /// Shows wave complete UI and transitions to upgrade state.
-    /// </summary>
     private IEnumerator OnWaveCompleteCoroutine()
     {
-        canPlayerMove = false;
-        UIManager.Instance.ShowWaveComplete();
-        yield return new WaitForSeconds(2f);
+        //UIManager.Instance.ShowWaveComplete(LastWaveKills);
+        yield return new WaitForSeconds(0.5f);
         UIManager.Instance.ShowUpgradeUI();
+    }
+    #endregion
+    #region Unity Callbacks
+    private void Awake()
+    {
+        if (Instance != null && Instance != this) Destroy(gameObject);
+        else Instance = this;
+    }
+
+    private void Update()
+    {
+        if (player != null && currentPlayerTransform != null)
+            currentPlayerTransform.position = player.transform.position;
     }
     #endregion
 
     #region Accessors
-    /// <summary>
-    /// Returns whether the player can currently move.
-    /// </summary>
     public bool GetCanPlayerMove() => canPlayerMove;
-
-    /// <summary>
-    /// Returns the current wave index.
-    /// </summary>
     public int GetCurrentWave() => currentWave;
-
-    /// <summary>
-    /// Returns the player's transform.
-    /// </summary>
     public Transform GetPlayerTransform() => currentPlayerTransform;
     #endregion
 }
