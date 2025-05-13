@@ -6,7 +6,9 @@ using UnityEngine.Events;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class SkillTreeUpgrade : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, IPointerEnterHandler, IPointerExitHandler
+public class SkillTreeUpgrade : MonoBehaviour,
+    IPointerDownHandler, IPointerUpHandler,
+    IPointerEnterHandler, IPointerExitHandler
 {
     [Header("Data")]
     [Tooltip("Defines name, cost, icon, and effects")]
@@ -34,28 +36,54 @@ public class SkillTreeUpgrade : MonoBehaviour, IPointerDownHandler, IPointerUpHa
     private float fillTimer = 0f;
     private bool isFilling = false;
     private bool isFilled = false;
+    private bool isUnlocked = false;
+
+    private Color iconDefaultColor;
+    private Color fillDefaultColor;
+
     private UITooltip uiTooltipInstance;
-    private GameObject currentToolTip;
+    private GameObject currentTooltip;
+
     void Awake()
     {
         // Ensure fill‐type
         fillImage.type = Image.Type.Filled;
         fillImage.fillMethod = Image.FillMethod.Vertical;
         fillImage.fillAmount = 0f;
+
+        // Capture whatever color you've set in the Inspector
+        iconDefaultColor = iconImage.color;
+        fillDefaultColor = fillImage.color;
     }
 
     void Start()
     {
-        // Populate UI from the SO
-        if (nodeDef != null)
-            ApplyDefinition();
+        // If you forgot your Canvas reference
         if (uiCanvas == null)
             uiCanvas = GetComponentInParent<Canvas>();
+
+        // Populate icon sprite & reset tint
+        if (nodeDef != null)
+            ApplyDefinition();
+
+        // Initial lock/unlock pass
+        EvaluatePrerequisites();
+
+        // Listen for other upgrades unlocking prerequisites
+        if (UpgradeManager.Instance != null)
+            UpgradeManager.Instance.OnUpgradePurchased += OnSomeNodePurchased;
+    }
+
+    void OnDestroy()
+    {
+        if (UpgradeManager.Instance != null)
+            UpgradeManager.Instance.OnUpgradePurchased -= OnSomeNodePurchased;
     }
 
     void Update()
     {
-        if (isFilling && !isFilled)
+        // 1) filling logic
+        if (isUnlocked && isFilling && !isFilled)
         {
             fillTimer += Time.deltaTime;
             fillImage.fillAmount = Mathf.Clamp01(fillTimer / fillDuration);
@@ -66,31 +94,23 @@ public class SkillTreeUpgrade : MonoBehaviour, IPointerDownHandler, IPointerUpHa
                 isFilling = false;
                 fillImage.fillAmount = 1f;
 
-                // 1) Invoke the SO’s own effect event
+                // Fire the SO’s own effect
                 nodeDef.onPurchased?.Invoke();
-                // 2) Hook for any extra UI behavior
+                // Register to manager so dependents unlock
+                UpgradeManager.Instance?.RegisterPurchase(nodeDef);
                 onFillComplete?.Invoke();
             }
         }
 
+        // 2) hover‐tooltip follow
         if (uiTooltipInstance != null)
-        {
-            // Convert screen mouse pos to canvas local pos
-            RectTransform canvasRT = uiCanvas.transform as RectTransform;
-            Vector2 localPoint;
-            RectTransformUtility.ScreenPointToLocalPointInRectangle(
-                canvasRT,
-                Input.mousePosition,
-                uiCanvas.renderMode == RenderMode.ScreenSpaceCamera ? uiCanvas.worldCamera : null,
-                out localPoint
-            );
-            uiTooltipInstance.GetComponent<RectTransform>().anchoredPosition = localPoint + tooltipOffset;
-        }
+            UpdateTooltipPosition();
     }
 
     public void OnPointerDown(PointerEventData eventData)
     {
-        if (isFilled) return;
+        if (!isUnlocked || isFilled) return;
+
         isFilling = true;
         fillTimer = 0f;
         fillImage.fillAmount = 0f;
@@ -98,49 +118,82 @@ public class SkillTreeUpgrade : MonoBehaviour, IPointerDownHandler, IPointerUpHa
 
     public void OnPointerUp(PointerEventData eventData)
     {
-        if (isFilled) return;
+        if (!isUnlocked || isFilled) return;
+
         isFilling = false;
         fillTimer = 0f;
         fillImage.fillAmount = 0f;
     }
+
     public void OnPointerEnter(PointerEventData eventData)
     {
-        Debug.Log("do i get here");
+        if (!isUnlocked || tooltipPrefab == null) return;
 
-        if (tooltipPrefab == null || nodeDef == null) return;
-
-        // Instantiate tooltip under the canvas
-        currentToolTip = Instantiate(tooltipPrefab, uiCanvas.transform);
-        uiTooltipInstance = currentToolTip.GetComponent<UITooltip>();
-        uiTooltipInstance.Show(nodeDef.nodeName,nodeDef.description, nodeDef.cost);
+        currentTooltip = Instantiate(tooltipPrefab, uiCanvas.transform, false);
+        uiTooltipInstance = currentTooltip.GetComponent<UITooltip>();
+        uiTooltipInstance.Show(nodeDef.nodeName, nodeDef.description, nodeDef.cost);
 
         UpdateTooltipPosition();
     }
+
+    public void OnPointerExit(PointerEventData eventData)
+    {
+        if (uiTooltipInstance != null)
+            Destroy(currentTooltip);
+    }
+
+    private void OnSomeNodePurchased(UpgradeNodeDefinition purchasedDef)
+    {
+        // if one of my prerequisites was just purchased, re-check
+        foreach (var prereq in nodeDef.prerequisites)
+        {
+            if (prereq == purchasedDef)
+            {
+                EvaluatePrerequisites();
+                break;
+            }
+        }
+    }
+
+    private void EvaluatePrerequisites()
+    {
+        // unlocked if no prereqs or *all* prereqs purchased
+        isUnlocked = true;
+        foreach (var prereq in nodeDef.prerequisites)
+        {
+            if (UpgradeManager.Instance == null ||
+                !UpgradeManager.Instance.IsPurchased(prereq))
+            {
+                isUnlocked = false;
+                break;
+            }
+        }
+
+        // apply color: default vs gray
+        var gray = new Color(0.5f, 0.5f, 0.5f);
+        iconImage.color = isUnlocked ? iconDefaultColor : gray;
+        fillImage.color = isUnlocked ? fillDefaultColor : gray;
+    }
+
     private void UpdateTooltipPosition()
     {
-        RectTransform canvasRT = uiCanvas.transform as RectTransform;
-        Vector2 localPoint;
+        var canvasRT = (RectTransform)uiCanvas.transform;
         RectTransformUtility.ScreenPointToLocalPointInRectangle(
             canvasRT,
             Input.mousePosition,
-            uiCanvas.renderMode == RenderMode.ScreenSpaceCamera ? uiCanvas.worldCamera : null,
-            out localPoint
+            uiCanvas.renderMode == RenderMode.ScreenSpaceCamera
+                ? uiCanvas.worldCamera
+                : null,
+            out Vector2 localPoint
         );
-        uiTooltipInstance.GetComponent<RectTransform>().anchoredPosition = localPoint + tooltipOffset;
+        uiTooltipInstance.GetComponent<RectTransform>().anchoredPosition
+            = localPoint + tooltipOffset;
     }
-    public void OnPointerExit(PointerEventData eventData)
-    {
-        Debug.Log($"[SkillTreeUpgrade] OnPointerExit on {name}");
-        if (uiTooltipInstance != null)
-        {
-            Destroy(uiTooltipInstance.gameObject);
-            Destroy(currentToolTip);
-        }
-            
-    }
+
     private void ApplyDefinition()
     {
         iconImage.sprite = nodeDef.icon;
-        iconImage.color = Color.white;  // reset tint in case you highlight on hover
+        // restore the default tint you captured
+        iconImage.color = iconDefaultColor;
     }
 }
