@@ -1,0 +1,30 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bb8d27bbcf70fb6429881a002e7d0de8, type: 3}
+  m_Name: Health Upgrade 8
+  m_EditorClassIdentifier: 
+  nodeName: Use enegery
+  tree: 1
+  tier: 3
+  cost: 3
+  description: Restore 5% fo dealt damage to the player
+  icon: {fileID: 21300000, guid: e7e4835bb993f24458bdf2ac58b81979, type: 3}
+  onPurchased:
+    m_PersistentCalls:
+      m_Calls: []
+  prerequisites:
+  - {fileID: 11400000, guid: 6a9cea8439050524fa1f203bac0a1d4b, type: 2}
+  - {fileID: 11400000, guid: 651c5320408b32541875bfff60058bdc, type: 2}
+  - {fileID: 11400000, guid: f93f17fd4b13c3a439fc0e3fb0b75d6f, type: 2}
+  - {fileID: 11400000, guid: 2be61b9f770ffcc479b0a467499e00f4, type: 2}
+  - {fileID: 11400000, guid: cfa0b9d39216c2b4a9894dcb33115035, type: 2}
+  - {fileID: 11400000, guid: fa4fc734fb2fd764b9605cd39c056dc7, type: 2}

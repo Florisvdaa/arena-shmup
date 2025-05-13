@@ -10,10 +10,15 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bb8d27bbcf70fb6429881a002e7d0de8, type: 3}
-  m_Name: Health lvl 1
+  m_Name: Health Upgrade 2
   m_EditorClassIdentifier: 
-  nodeName: Health increase
+  nodeName: Regenerate Life
   tree: 1
   tier: 1
   cost: 1
-  description: Increase health by 10%
+  description: Gain + 20% health when regenerating health
+  icon: {fileID: 21300000, guid: 810c3489573bf7d4491dc4deb49e97e7, type: 3}
+  onPurchased:
+    m_PersistentCalls:
+      m_Calls: []
+  prerequisites: []
