@@ -3330,6 +3330,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Skill Tree
       objectReference: {fileID: 0}
+    - target: {fileID: 3362072381254684225, guid: 50460045c2904ac41a5d9e607052344b, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 3440644137192541240, guid: 50460045c2904ac41a5d9e607052344b, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
