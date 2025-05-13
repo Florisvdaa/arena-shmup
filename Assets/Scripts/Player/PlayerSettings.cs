@@ -30,6 +30,10 @@ public class PlayerSettings : MonoBehaviour
     [SerializeField] private MMF_Player upgradeFeedback;
     [Header("HealthBar ref")]
     [SerializeField] private MMProgressBar progressBar;
+    [Header("Dash Settings")]
+    [SerializeField] private float dashSpeed = 20f;
+    [SerializeField] private float dashDuration = 0.2f;
+    [SerializeField] private float dashCoolDown = 1f;
     #endregion
 
     #region Runtime Fields & Properties
@@ -65,6 +69,9 @@ public class PlayerSettings : MonoBehaviour
     public Transform FirePoint => firePoint;
     public MMF_Player ShootFeedback => shootFeedback;
     public MMF_Player UpgradeFeedback => upgradeFeedback;
+    public float DashSpeed => dashSpeed;
+    public float DashDuration => dashDuration;
+    public float DashCooldown => dashCoolDown;
     #endregion
 
     #region Unity Callbacks

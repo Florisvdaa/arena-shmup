@@ -25,6 +25,11 @@ public class Player : MonoBehaviour
 
     private bool isHoldingUpgrade = false;
     private float upgradeHoldTimer = 0f;
+
+    [SerializeField] private bool isDashing = false;
+    [SerializeField] private float dashTimer;
+    [SerializeField] private float dashCooldownTimer = 0f;
+    [SerializeField] private Vector3 dashDirection;
     #endregion
 
     #region Unity Callbacks
@@ -40,11 +45,7 @@ public class Player : MonoBehaviour
         inputActions = new PlayerInputActions();
         inputActions.Enable();
 
-        inputActions.player.Move.performed += OnMove;
-        inputActions.player.Move.canceled += OnMove;
-
-        inputActions.player.Upgrade.performed += OnUpgradePerformed;
-        inputActions.player.Upgrade.canceled += OnUpgradeCanceled;
+        SetUpInputs();
 
         playerVisual = playerSettings.PlayerVisualTransform;
     }
@@ -58,6 +59,7 @@ public class Player : MonoBehaviour
         inputActions.player.Move.canceled -= OnMove;
         inputActions.player.Upgrade.performed -= OnUpgradePerformed;
         inputActions.player.Upgrade.canceled -= OnUpgradeCanceled;
+        inputActions.player.Dash.performed -= OnDashPerformed;
         inputActions.Disable();
     }
 
@@ -66,15 +68,24 @@ public class Player : MonoBehaviour
     /// </summary>
     private void Update()
     {
-        if (!isHoldingUpgrade) return;
-
-        upgradeHoldTimer += Time.unscaledDeltaTime;
-        UIManager.Instance.SetUpgradeHoldProgress(upgradeHoldTimer / upgradeHoldDuration);
-
-        if (upgradeHoldTimer >= upgradeHoldDuration)
+        // Upgrade input handling
+        if (isHoldingUpgrade)
         {
-            TriggerUpgradeScreen();
-            OnUpgradeCanceled(default);
+            upgradeHoldTimer += Time.unscaledDeltaTime;
+            UIManager.Instance.SetUpgradeHoldProgress(upgradeHoldTimer / upgradeHoldDuration);
+
+            if (upgradeHoldTimer >= upgradeHoldDuration)
+            {
+                TriggerUpgradeScreen();
+                OnUpgradeCanceled(default);
+            }
+        }
+
+        // Dash cooldown logic
+        if (dashCooldownTimer > 0f)
+        {
+            dashCooldownTimer -= Time.deltaTime;
+            Debug.Log($"Dash cooldown: {dashCooldownTimer:F2}s remaining");
         }
     }
 
@@ -86,7 +97,14 @@ public class Player : MonoBehaviour
         if (!GameManager.Instance.GetCanPlayerMove()) return;
         if (TimeManager.Instance.IsPaused) return;
 
-        HandleMovement();
+        if (isDashing)
+        {
+            HandleDash();
+        }
+        else
+        {
+            HandleMovement();
+        }
         RotateVisualTowardsMouse();
     }
     #endregion
@@ -96,7 +114,6 @@ public class Player : MonoBehaviour
     {
         moveInput = ctx.ReadValue<Vector2>();
     }
-
     private void OnUpgradePerformed(InputAction.CallbackContext ctx)
     {
         if (!ProgressManager.Instance.IsUpgradeAvailable) return;
@@ -104,12 +121,40 @@ public class Player : MonoBehaviour
         isHoldingUpgrade = true;
         upgradeHoldTimer = 0f;
     }
-
     private void OnUpgradeCanceled(InputAction.CallbackContext ctx)
     {
         isHoldingUpgrade = false;
         upgradeHoldTimer = 0f;
         UIManager.Instance.SetUpgradeHoldProgress(0f);
+    }
+    private void OnDashPerformed(InputAction.CallbackContext ctx)
+    {
+        if (isDashing)
+        {
+            Debug.Log("Tried to dash but already dashing.");
+            return;
+        }
+
+        if (dashCooldownTimer > 0f)
+        {
+            Debug.Log($"Tried to dash but on cooldown. Time remaining: {dashCooldownTimer:F2}s");
+            return;
+        }
+
+        isDashing = true;
+        dashTimer = playerSettings.DashDuration;
+
+        // Use look direction
+        if (playerVisual != null)
+        {
+            dashDirection = playerVisual.forward;
+        }
+        else
+        {
+            dashDirection = new Vector3(moveInput.x, 0f, moveInput.y).normalized;
+        }
+
+        Debug.Log("Dash started!");
     }
     #endregion
 
@@ -120,7 +165,6 @@ public class Player : MonoBehaviour
         float dt = Time.unscaledDeltaTime;
         rb.MovePosition(rb.position + movement * playerSettings.CurrentMovementSpeed * dt);
     }
-
     private void RotateVisualTowardsMouse()
     {
         if (playerVisual == null || mainCam == null) return;
@@ -136,12 +180,38 @@ public class Player : MonoBehaviour
                 playerVisual.rotation = Quaternion.LookRotation(dir);
         }
     }
+    private void HandleDash()
+    {
+        float dt = Time.fixedDeltaTime;
+        rb.MovePosition(rb.position + dashDirection * playerSettings.DashSpeed * dt);
+
+        dashTimer -= dt;
+        if (dashTimer <= 0f)
+        {
+            isDashing = false;
+            dashCooldownTimer = playerSettings.DashCooldown;
+            Debug.Log("Dash ended. Cooldown started.");
+        }
+    }
     #endregion
 
     #region Upgrade
     private void TriggerUpgradeScreen()
     {
         UIManager.Instance.ShowUpgradeMenu();
+    }
+    #endregion
+
+    #region Input setup
+    private void SetUpInputs()
+    {
+        inputActions.player.Move.performed += OnMove;
+        inputActions.player.Move.canceled += OnMove;
+
+        inputActions.player.Upgrade.performed += OnUpgradePerformed;
+        inputActions.player.Upgrade.canceled += OnUpgradeCanceled;
+
+        inputActions.player.Dash.performed += OnDashPerformed;
     }
     #endregion
 }

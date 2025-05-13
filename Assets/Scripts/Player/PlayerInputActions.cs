@@ -44,6 +44,15 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Dash"",
+                    ""type"": ""Button"",
+                    ""id"": ""698614fb-f641-4cee-9d83-06f616c21c44"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -123,6 +132,17 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
                     ""action"": ""Upgrade"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""4764429d-2204-4d77-8c68-d040678309b4"",
+                    ""path"": ""<Keyboard>/space"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Dash"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -133,6 +153,7 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         m_player = asset.FindActionMap("player", throwIfNotFound: true);
         m_player_Move = m_player.FindAction("Move", throwIfNotFound: true);
         m_player_Upgrade = m_player.FindAction("Upgrade", throwIfNotFound: true);
+        m_player_Dash = m_player.FindAction("Dash", throwIfNotFound: true);
     }
 
     ~@PlayerInputActions()
@@ -201,12 +222,14 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
     private List<IPlayerActions> m_PlayerActionsCallbackInterfaces = new List<IPlayerActions>();
     private readonly InputAction m_player_Move;
     private readonly InputAction m_player_Upgrade;
+    private readonly InputAction m_player_Dash;
     public struct PlayerActions
     {
         private @PlayerInputActions m_Wrapper;
         public PlayerActions(@PlayerInputActions wrapper) { m_Wrapper = wrapper; }
         public InputAction @Move => m_Wrapper.m_player_Move;
         public InputAction @Upgrade => m_Wrapper.m_player_Upgrade;
+        public InputAction @Dash => m_Wrapper.m_player_Dash;
         public InputActionMap Get() { return m_Wrapper.m_player; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -222,6 +245,9 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
             @Upgrade.started += instance.OnUpgrade;
             @Upgrade.performed += instance.OnUpgrade;
             @Upgrade.canceled += instance.OnUpgrade;
+            @Dash.started += instance.OnDash;
+            @Dash.performed += instance.OnDash;
+            @Dash.canceled += instance.OnDash;
         }
 
         private void UnregisterCallbacks(IPlayerActions instance)
@@ -232,6 +258,9 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
             @Upgrade.started -= instance.OnUpgrade;
             @Upgrade.performed -= instance.OnUpgrade;
             @Upgrade.canceled -= instance.OnUpgrade;
+            @Dash.started -= instance.OnDash;
+            @Dash.performed -= instance.OnDash;
+            @Dash.canceled -= instance.OnDash;
         }
 
         public void RemoveCallbacks(IPlayerActions instance)
@@ -253,5 +282,6 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
     {
         void OnMove(InputAction.CallbackContext context);
         void OnUpgrade(InputAction.CallbackContext context);
+        void OnDash(InputAction.CallbackContext context);
     }
 }
