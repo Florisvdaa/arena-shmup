@@ -26,10 +26,10 @@ public class Player : MonoBehaviour
     private bool isHoldingUpgrade = false;
     private float upgradeHoldTimer = 0f;
 
-    [SerializeField] private bool isDashing = false;
-    [SerializeField] private float dashTimer;
-    [SerializeField] private float dashCooldownTimer = 0f;
-    [SerializeField] private Vector3 dashDirection;
+    private bool isDashing = false;
+    private float dashTimer;
+    private float dashCooldownTimer = 0f;
+    private Vector3 dashDirection;
     #endregion
 
     #region Unity Callbacks
@@ -116,7 +116,7 @@ public class Player : MonoBehaviour
     }
     private void OnUpgradePerformed(InputAction.CallbackContext ctx)
     {
-        if (!ProgressManager.Instance.IsUpgradeAvailable) return;
+        //if (!ProgressManager.Instance.IsUpgradeAvailable) return;
 
         isHoldingUpgrade = true;
         upgradeHoldTimer = 0f;

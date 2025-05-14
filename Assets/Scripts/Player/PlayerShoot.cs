@@ -12,7 +12,11 @@ public class PlayerShoot : MonoBehaviour
     #region Private Fields
     private Transform firePoint;
     private float fireCooldown = 0f;
+    private float currentHeat = 0f;
+    private bool isOverheated = false;
+
     private MMF_Player shootFeedback;
+    private MMF_Player overheatFeedback;
     private PlayerSettings playerSettings;
     #endregion
 
@@ -22,15 +26,19 @@ public class PlayerShoot : MonoBehaviour
         playerSettings = GetComponent<PlayerSettings>();
         firePoint = playerSettings.FirePoint;
         shootFeedback = playerSettings.ShootFeedback;
+        overheatFeedback = playerSettings.OverheatFeedback; // Add this in PlayerSettings
     }
 
     private void Update()
     {
-        if (TimeManager.Instance.IsPaused) return;
-        if (!GameManager.Instance.GetCanPlayerMove()) return;
+        if (TimeManager.Instance.IsPaused || !GameManager.Instance.GetCanPlayerMove())
+            return;
 
         fireCooldown -= Time.deltaTime;
-        if (Mouse.current.leftButton.isPressed && fireCooldown <= 0f)
+
+        HandleCooling();
+
+        if (Mouse.current.leftButton.isPressed && fireCooldown <= 0f && !isOverheated)
         {
             Shoot();
             fireCooldown = playerSettings.CurrentFireRate;
@@ -49,6 +57,34 @@ public class PlayerShoot : MonoBehaviour
         bullet.SetActive(true);
 
         shootFeedback?.PlayFeedbacks();
+
+        AddHeat(playerSettings.HeatPerShot);
+    }
+
+    private void AddHeat(float amount)
+    {
+        currentHeat += amount;
+
+        if (currentHeat >= playerSettings.OverheatThreshold)
+        {
+            currentHeat = playerSettings.OverheatThreshold;
+            isOverheated = true;
+            overheatFeedback?.PlayFeedbacks();
+        }
+    }
+
+    private void HandleCooling()
+    {
+        if (!Mouse.current.leftButton.isPressed || isOverheated)
+        {
+            currentHeat -= playerSettings.CoolRate * Time.deltaTime;
+            currentHeat = Mathf.Max(0f, currentHeat);
+
+            if (isOverheated && currentHeat <= playerSettings.OverheatReleaseThreshold)
+            {
+                isOverheated = false;
+            }
+        }
     }
     #endregion
 }

@@ -22,7 +22,7 @@ public class UpgradeNodeDefinition : ScriptableObject
 
     [Header("Upgrade Effects")]
     [Tooltip("Fired when this upgrade finishes filling")]
-    public UnityEvent onPurchased;
+    public UpgradeEffect[] effects;
 
     [Header("Dependencies")]
     [Tooltip("Only unlock this once these nodes are purchased")]

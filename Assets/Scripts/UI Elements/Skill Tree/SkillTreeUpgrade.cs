@@ -6,9 +6,7 @@ using UnityEngine.Events;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class SkillTreeUpgrade : MonoBehaviour,
-    IPointerDownHandler, IPointerUpHandler,
-    IPointerEnterHandler, IPointerExitHandler
+public class SkillTreeUpgrade : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, IPointerEnterHandler, IPointerExitHandler
 {
     [Header("Data")]
     [Tooltip("Defines name, cost, icon, and effects")]
@@ -94,9 +92,8 @@ public class SkillTreeUpgrade : MonoBehaviour,
                 isFilling = false;
                 fillImage.fillAmount = 1f;
 
-                // Fire the SO’s own effect
-                nodeDef.onPurchased?.Invoke();
-                // Register to manager so dependents unlock
+                ApplyEffects(); // ← Apply effects based on SO
+                //nodeDef.onPurchased?.Invoke(); // Optional extras
                 UpgradeManager.Instance?.RegisterPurchase(nodeDef);
                 onFillComplete?.Invoke();
             }
@@ -195,5 +192,27 @@ public class SkillTreeUpgrade : MonoBehaviour,
         iconImage.sprite = nodeDef.icon;
         // restore the default tint you captured
         iconImage.color = iconDefaultColor;
+    }
+
+    private void ApplyEffects()
+    {
+        foreach (var effect in nodeDef.effects)
+        {
+            switch (effect.effectType)
+            {
+                case UpgradeEffectType.HealthPercentage:
+                    PlayerSettings.Instance.IncreaseHealthByPercentage(effect.value);
+                    break;
+                case UpgradeEffectType.SpeedFlat:
+                    PlayerSettings.Instance.IncreaseSpeed(effect.value);
+                    break;
+                case UpgradeEffectType.FireRateDecrease:
+                    PlayerSettings.Instance.IncreaseFireRate(effect.value);
+                    break;
+                case UpgradeEffectType.ExpMultiplier:
+                    PlayerSettings.Instance.IncreaseExpMultiplier(effect.value);
+                    break;
+            }
+        }
     }
 }

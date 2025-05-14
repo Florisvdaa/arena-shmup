@@ -18,7 +18,7 @@ MonoBehaviour:
   cost: 1
   description: Increases the max health by 10%
   icon: {fileID: 21300000, guid: 0b84478a19a8b4a40aad0fb9dbb2f761, type: 3}
-  onPurchased:
-    m_PersistentCalls:
-      m_Calls: []
+  effects:
+  - effectType: 0
+    value: 0.1
   prerequisites: []

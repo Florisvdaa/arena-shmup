@@ -89,7 +89,7 @@ public class PlayerRollMovementTest : MonoBehaviour
 
     private void OnUpgradePerformed(InputAction.CallbackContext _)
     {
-        if (!ProgressManager.Instance.IsUpgradeAvailable) return;
+        //if (!ProgressManager.Instance.IsUpgradeAvailable) return;
         isHoldingUpgrade = true;
         upgradeHoldTimer = 0f;
     }

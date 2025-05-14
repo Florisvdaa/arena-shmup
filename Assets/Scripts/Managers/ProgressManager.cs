@@ -10,49 +10,31 @@ using UnityEngine;
 public class ProgressManager : MonoBehaviour
 {
     #region Singleton
-    /// <summary>
-    /// Global access point for the ProgressManager instance.
-    /// </summary>
     public static ProgressManager Instance { get; private set; }
     #endregion
 
     #region Events
-    /// <summary>
-    /// Invoked when upgrade availability changes. Boolean indicates if upgrades remain.
-    /// </summary>
-    public event Action<bool> OnUpgradeAvailabilityChanged;
+    public event Action<int> OnMilestoneReached; // e.g. 1, 2, or 3
+    public event Action<int> OnPUPChanged;       // PUP = Power-Up Points
+    public event Action OnRoundEnded;
     #endregion
 
     #region Inspector Fields
-    [Tooltip("Base experience required to reach level 2.")]
-    [SerializeField] private int baseExpToLevel = 100;
+    [Tooltip("Total EXP needed to reach all 3 milestones in one round.")]
+    [SerializeField] private float roundTotalExp = 100f;
 
-    [Tooltip("Rate at which exp requirement grows each level.")]
-    [SerializeField] private float expGrowthRate = 1.2f;
-
-    [Header("XP Bar ref")]
-    [Tooltip("Drag the MMProgressBar used for XP here")]
+    [Tooltip("XP Bar UI Reference")]
     [SerializeField] private MMProgressBar xpProgressBar;
     #endregion
 
     #region Private Fields
-    private int currentLevel = 1;
     private float currentExp = 0f;
-    private float expToNextLevel;
-    private int availableUpgrades = 0;
-    #endregion
-
-    #region Properties
-    /// <summary>
-    /// Returns true if there are unused upgrades available.
-    /// </summary>
-    public bool IsUpgradeAvailable => availableUpgrades > 0;
+    private int milestonesReached = 0;
+    private float[] milestoneThresholds;
+    private int currentPUP = 0;
     #endregion
 
     #region Unity Callbacks
-    /// <summary>
-    /// Initialize singleton and set initial exp required.
-    /// </summary>
     private void Awake()
     {
         if (Instance == null)
@@ -60,78 +42,96 @@ public class ProgressManager : MonoBehaviour
         else
             Destroy(gameObject);
 
-        expToNextLevel = baseExpToLevel;
-
-        // initialize XP bar (zero fill)
-        if (xpProgressBar != null)
-        {
-            xpProgressBar.SetBar(0f, 0f, expToNextLevel);
-        }
+        CalculateMilestones();
+        ResetRoundProgress();
     }
     #endregion
 
     #region Public Methods
-    /// <summary>
-    /// Adds experience and handles level-up logic.
-    /// </summary>
-    /// <param name="amount">Amount of experience to gain.</param>
+
     public void GainExp(float amount)
     {
+        if (milestonesReached >= 3) return;
+
         currentExp += amount;
         UIManager.Instance.ShowFloatingText(amount.ToString());
-        // handle one or more level-ups
-        while (currentExp >= expToNextLevel)
-        {
-            currentExp -= expToNextLevel;
-            LevelUp();
 
-            // reset bar to zero on new level
-            xpProgressBar?.UpdateBar(0f, 0f, expToNextLevel);
+        // Handle milestones
+        while (milestonesReached < 3 && currentExp >= milestoneThresholds[milestonesReached])
+        {
+            currentExp -= milestoneThresholds[milestonesReached];
+            milestonesReached++;
+            currentPUP++;
+
+            OnMilestoneReached?.Invoke(milestonesReached);
+            OnPUPChanged?.Invoke(currentPUP);
+
+            // If it's the final milestone, cap bar and exit
+            if (milestonesReached >= 3)
+            {
+                xpProgressBar?.UpdateBar(milestoneThresholds[2], 0f, milestoneThresholds[2]);
+                currentExp = 0f; // optionally freeze XP
+                return;
+            }
+
+            // Reset bar for next milestone
+            xpProgressBar?.UpdateBar(0f, 0f, milestoneThresholds[milestonesReached]);
         }
 
-        // finally, update the XP bar to current progress
-        xpProgressBar?.UpdateBar(currentExp, 0f, expToNextLevel);
+        // Update XP bar toward current milestone
+        if (milestonesReached < 3)
+        {
+            xpProgressBar?.UpdateBar(currentExp, 0f, milestoneThresholds[milestonesReached]);
+        }
     }
 
     /// <summary>
-    /// Consumes one available upgrade.
+    /// Call this when the round ends.
     /// </summary>
-    public void UpgradeConsumed()
+    public void EndRound()
     {
-        if (availableUpgrades <= 0) return;
-        availableUpgrades--;
-        OnUpgradeAvailabilityChanged?.Invoke(availableUpgrades > 0);
+        // Reward 1 permanent skill point
+        UpgradeManager.Instance?.AddSkillPoint(1);
+
+        // Pass earned PUPs to PowerUp system
+        //PowerUpManager.Instance?.AddPoints(currentPUP);
+
+        // Trigger round feedback/UI
+        OnRoundEnded?.Invoke();
+
+        // Reset round-specific values
+        ResetRoundProgress();
     }
+
+    public void ResetRoundProgress()
+    {
+        currentExp = 0f;
+        milestonesReached = 0;
+        currentPUP = 0;
+        CalculateMilestones();
+
+        xpProgressBar?.SetBar(0f, 0f, roundTotalExp);
+        OnPUPChanged?.Invoke(currentPUP);
+    }
+
     #endregion
 
     #region Private Methods
-    /// <summary>
-    /// Handles leveling up: increases level, adjusts exp requirement, and flags an upgrade.
-    /// </summary>
-    private void LevelUp()
+    private void CalculateMilestones()
     {
-        FeedBackManager.Instance.PlayerUILevelUpFeedback();
-        currentLevel++;
-        expToNextLevel *= expGrowthRate;
-        availableUpgrades++;
-        OnUpgradeAvailabilityChanged?.Invoke(true);
+        milestoneThresholds = new float[3];
+        for (int i = 0; i < 3; i++)
+        {
+            milestoneThresholds[i] = roundTotalExp * ((i + 1) / 3f);
+        }
     }
     #endregion
 
-    #region References
-    /// <summary>
-    /// Returns the current player level.
-    /// </summary>
-    public int GetCurrentLevel() => currentLevel;
-
-    /// <summary>
-    /// Returns the current exp progress towards next level.
-    /// </summary>
-    public float GetCurrentEXP() => currentExp;
-
-    /// <summary>
-    /// Returns the exp required to reach the next level.
-    /// </summary>
-    public float GetEXPTillNextLevel() => expToNextLevel;
+    #region Accessors
+    public int GetMilestonesReached() => milestonesReached;
+    public float GetCurrentExp() => currentExp;
+    public int GetCurrentPUP() => currentPUP;
+    public float GetNextMilestoneThreshold() =>
+        milestonesReached < 3 ? milestoneThresholds[milestonesReached] : roundTotalExp;
     #endregion
 }

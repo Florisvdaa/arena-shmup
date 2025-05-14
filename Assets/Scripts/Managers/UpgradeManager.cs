@@ -10,6 +10,8 @@ public class UpgradeManager : MonoBehaviour
     // Tracks purchased nodes
     private HashSet<UpgradeNodeDefinition> purchased = new HashSet<UpgradeNodeDefinition>();
 
+    [SerializeField] private int currentSkillPoints = 0;
+
     /// <summary>
     /// Fires any time a node is newly purchased
     /// </summary>
@@ -25,6 +27,11 @@ public class UpgradeManager : MonoBehaviour
         Instance = this;
         // If you want this to persist between scenes:
         // DontDestroyOnLoad(gameObject);
+    }
+
+    public void AddSkillPoint(int amount)
+    {
+        currentSkillPoints += amount;
     }
 
     /// <summary>

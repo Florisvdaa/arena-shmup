@@ -8,6 +8,7 @@ using TMPro;
 #endif
 using UnityEngine.Events;
 using UnityEngine.Serialization;
+using Codice.Client.BaseCommands;
 
 namespace MoreMountains.Tools
 {
@@ -310,13 +311,16 @@ namespace MoreMountains.Tools
 		protected bool _isPercentageTextNotNull;
 		protected bool _isPercentageTextMeshProNotNull;
 
-		#region PUBLIC_API
-        
-		/// <summary>
-		/// Updates the bar's values, using a normalized value
-		/// </summary>
-		/// <param name="normalizedValue"></param>
-		public virtual void UpdateBar01(float normalizedValue) 
+        // Selfmade changes
+        private float _maxValue = 1f;
+
+        #region PUBLIC_API
+
+        /// <summary>
+        /// Updates the bar's values, using a normalized value
+        /// </summary>
+        /// <param name="normalizedValue"></param>
+        public virtual void UpdateBar01(float normalizedValue) 
 		{
 			UpdateBar(Mathf.Clamp01(normalizedValue), 0f, 1f);
 		}
@@ -329,7 +333,9 @@ namespace MoreMountains.Tools
 		/// <param name="maxValue">Max value.</param>
 		public virtual void UpdateBar(float currentValue,float minValue,float maxValue) 
 		{
-			if (!_initialized)
+            _maxValue = maxValue;
+
+            if (!_initialized)
 			{
 				Initialization();
 			}
@@ -618,13 +624,21 @@ namespace MoreMountains.Tools
 		/// </summary>
 		protected virtual void ComputeUpdatedText()
 		{
-			_updatedText = TextPrefix + (BarTarget * TextValueMultiplier).ToString(TextFormat);
-			if (DisplayTotal)
-			{
-				_updatedText += TotalSeparator + (TextValueMultiplier).ToString(TextFormat);
-			}
-			_updatedText += TextSuffix;
-		}
+            //_updatedText = TextPrefix + (BarTarget * TextValueMultiplier).ToString(TextFormat);
+            //if (DisplayTotal)
+            //{
+            //	_updatedText += TotalSeparator + (TextValueMultiplier).ToString(TextFormat);
+            //}
+            //_updatedText += TextSuffix;
+
+            float currentValue = MMMaths.Remap(BarTarget, MinimumBarFillValue, MaximumBarFillValue, 0f, 1f) * _maxValue;
+            _updatedText = TextPrefix + Mathf.RoundToInt(currentValue).ToString();
+
+            if (DisplayTotal)
+            {
+                _updatedText += TotalSeparator + Mathf.RoundToInt(_maxValue).ToString() + "]";
+            }
+        }
         
 		/// <summary>
 		/// On Update we update our bars

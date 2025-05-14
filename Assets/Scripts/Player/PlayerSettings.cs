@@ -23,6 +23,11 @@ public class PlayerSettings : MonoBehaviour
     [Header("Default Weapon")]
     [SerializeField] private Transform firePoint;
     [SerializeField] private float defaultFireRate = 0.2f;
+    [SerializeField] private float heatPerShot = 10f;
+    [SerializeField] private float overheatThreshold = 100f;
+    [SerializeField] private float overheatReleaseThreshold = 60f;
+    [SerializeField] private float coolRate = 25f;
+    [SerializeField] private MMF_Player overheatFeedback;
     [SerializeField] private MMF_Player shootFeedback;
     [Header("Default EXP")]
     [SerializeField] private float defaultExpMultiplier = 1f;
@@ -43,7 +48,16 @@ public class PlayerSettings : MonoBehaviour
     private float currentFireRate;
     private float currentExpMultiplier;
 
-    public float CurrentMaxHealth { get => currentMaxHealth; set => currentMaxHealth = Mathf.Max(1f, value); }
+    public float CurrentMaxHealth
+    {
+        get => currentMaxHealth;
+        set
+        {
+            currentMaxHealth = Mathf.Max(1f, value);
+            // Make sure the bar refreshes
+            RefreshHealthBar();
+        }
+    }
     public float CurrentHealth
     {
         get => currentHealth;
@@ -65,13 +79,18 @@ public class PlayerSettings : MonoBehaviour
     public float CurrentFireRate { get => currentFireRate; set => currentFireRate = Mathf.Max(0.01f, value); }
     public float CurrentExpMultiplier { get => currentExpMultiplier; set => currentExpMultiplier = Mathf.Max(1f, value); }
 
+    public float DashSpeed => dashSpeed;
+    public float DashDuration => dashDuration;
+    public float DashCooldown => dashCoolDown;
+    public float HeatPerShot => heatPerShot;
+    public float OverheatThreshold => overheatThreshold;
+    public float OverheatReleaseThreshold => overheatReleaseThreshold;
+    public float CoolRate => coolRate;
     public Transform PlayerVisualTransform => playerVisualTransform;
     public Transform FirePoint => firePoint;
     public MMF_Player ShootFeedback => shootFeedback;
     public MMF_Player UpgradeFeedback => upgradeFeedback;
-    public float DashSpeed => dashSpeed;
-    public float DashDuration => dashDuration;
-    public float DashCooldown => dashCoolDown;
+    public MMF_Player OverheatFeedback => overheatFeedback;
     #endregion
 
     #region Unity Callbacks
@@ -95,6 +114,14 @@ public class PlayerSettings : MonoBehaviour
         CurrentFireRate = defaultFireRate;
         CurrentExpMultiplier = defaultExpMultiplier;
     }
+
+    public void RefreshHealthBar()
+    {
+        if (progressBar != null)
+        {
+            progressBar.UpdateBar(currentHealth, 0f, currentMaxHealth);
+        }
+    }
     #endregion
 
     #region Stat Upgrades
@@ -111,8 +138,16 @@ public class PlayerSettings : MonoBehaviour
     public void IncreaseHealth(float amount)
     {
         CurrentMaxHealth += amount;
-        CurrentHealth = CurrentMaxHealth;
+        CurrentHealth += amount; // This will now re-trigger bar update
+        RefreshHealthBar(); // Redundant, but ensures bar uses new max
         upgradeFeedback?.PlayFeedbacks();
+
+        Debug.Log($"Current max health: {currentMaxHealth} / Current Health: {currentHealth}");
+    }
+    public void IncreaseHealthByPercentage(float percentage)
+    {
+        float amount = currentMaxHealth * percentage;
+        IncreaseHealth(amount); // already refreshes
     }
     public void IncreaseExpMultiplier(float amount)
     {

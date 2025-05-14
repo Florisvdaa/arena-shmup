@@ -109,7 +109,7 @@ public class UIManager : MonoBehaviour
     /// </summary>
     private void Start()
     {
-        ProgressManager.Instance.OnUpgradeAvailabilityChanged += ShowUpgradeControls;
+        //ProgressManager.Instance.OnUpgradeAvailabilityChanged += ShowUpgradeControls;
         UpdateAllUI();
     }
 
@@ -121,7 +121,7 @@ public class UIManager : MonoBehaviour
         scoreText.text = "Score: " + ScoreManager.Instance.GetCurrentScore();
         waveText.text = GameManager.Instance.GetCurrentWave().ToString();
         killChainMultiplier.text = KillChainManager.Instance.GetKillChainMultiplier() + "X";
-        currentPlayerLevel.text = "LVL:" + ProgressManager.Instance.GetCurrentLevel().ToString();
+        //currentPlayerLevel.text = "LVL:" + ProgressManager.Instance.GetCurrentLevel().ToString();
 
         //playerHealthSlider.maxValue = PlayerSettings.Instance.CurrentMaxHealth;
         //playerHealthSlider.value = PlayerSettings.Instance.CurrentHealth;
@@ -164,7 +164,7 @@ public class UIManager : MonoBehaviour
         scoreText.text = "Score: " + ScoreManager.Instance.GetCurrentScore();
         waveText.text = GameManager.Instance.GetCurrentWave().ToString();
         killChainMultiplier.text = KillChainManager.Instance.GetKillChainMultiplier().ToString();
-        currentPlayerLevel.text = "LVL:" + ProgressManager.Instance.GetCurrentLevel().ToString();
+        //currentPlayerLevel.text = "LVL:" + ProgressManager.Instance.GetCurrentLevel().ToString();
 
         //playerHealthSlider.maxValue = PlayerSettings.Instance.CurrentMaxHealth;
         //playerHealthSlider.value = PlayerSettings.Instance.CurrentHealth;
