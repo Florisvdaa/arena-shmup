@@ -20,7 +20,7 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: xp mat fill
+  m_Name: New xp fill test
   m_Shader: {fileID: 4800000, guid: 933532a4fcc9baf4fa0491de14d08ed7, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
@@ -44,7 +44,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _BaseMap:
-        m_Texture: {fileID: 2800000, guid: 6d137f47cc3827647a6768198118af6c, type: 3}
+        m_Texture: {fileID: 2800000, guid: efc46366a47bbc740bfac87fcfa18918, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _BumpMap:
@@ -88,7 +88,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MainTex:
-        m_Texture: {fileID: 2800000, guid: 6d137f47cc3827647a6768198118af6c, type: 3}
+        m_Texture: {fileID: 2800000, guid: efc46366a47bbc740bfac87fcfa18918, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _Mask:
@@ -258,12 +258,12 @@ Material:
     - _WorkflowMode: 1
     - _ZWrite: 1
     m_Colors:
-    - _BaseColor: {r: 1, g: 0, b: 0.90361214, a: 1}
+    - _BaseColor: {r: 0.013375044, g: 1, b: 0, a: 1}
     - _BaseColorAddSubDiff: {r: 1, g: 0, b: 0, a: 0}
     - _CameraFadeParams: {r: 0, g: Infinity, b: 0, a: 0}
     - _ClipRect: {r: -32767, g: -32767, b: 32767, a: 32767}
-    - _Color: {r: 1, g: 0, b: 0.90361214, a: 1}
-    - _EmissionColor: {r: 0.7490196, g: 0, b: 0.6322757, a: 1}
+    - _Color: {r: 0.013375044, g: 1, b: 0, a: 1}
+    - _EmissionColor: {r: 0, g: 0.972549, b: 0.035446078, a: 1}
     - _EnvMatrixRotation: {r: 0, g: 0, b: 0, a: 0}
     - _FaceColor: {r: 4, g: 4, b: 4, a: 1}
     - _Flip: {r: 1, g: 1, b: 1, a: 1}

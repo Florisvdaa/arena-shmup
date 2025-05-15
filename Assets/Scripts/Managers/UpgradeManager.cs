@@ -47,4 +47,6 @@ public class UpgradeManager : MonoBehaviour
     /// Has this node been purchased?
     /// </summary>
     public bool IsPurchased(UpgradeNodeDefinition def) => purchased.Contains(def);
+
+    public int GetCurrentSkillPoints() => currentSkillPoints;
 }

@@ -24,14 +24,16 @@ public class ProgressManager : MonoBehaviour
     [SerializeField] private float roundTotalExp = 100f;
 
     [Tooltip("XP Bar UI Reference")]
-    [SerializeField] private MMProgressBar xpProgressBar;
+    //[SerializeField] private MMProgressBar xpProgressBar;
+    [SerializeField] private MilestoneProgressBarUI milestoneProgressBarUI;
     #endregion
 
     #region Private Fields
     private float currentExp = 0f;
-    private int milestonesReached = 0;
+    [SerializeField] private int milestonesReached = 0;
     private float[] milestoneThresholds;
-    private int currentPUP = 0;
+    [SerializeField] private int currentPUP = 0;
+    private int availablePUPForShop = 0;
     #endregion
 
     #region Unity Callbacks
@@ -59,7 +61,6 @@ public class ProgressManager : MonoBehaviour
         // Handle milestones
         while (milestonesReached < 3 && currentExp >= milestoneThresholds[milestonesReached])
         {
-            currentExp -= milestoneThresholds[milestonesReached];
             milestonesReached++;
             currentPUP++;
 
@@ -69,38 +70,47 @@ public class ProgressManager : MonoBehaviour
             // If it's the final milestone, cap bar and exit
             if (milestonesReached >= 3)
             {
-                xpProgressBar?.UpdateBar(milestoneThresholds[2], 0f, milestoneThresholds[2]);
+                //xpProgressBar?.UpdateBar(milestoneThresholds[2], 0f, milestoneThresholds[2]);
                 currentExp = 0f; // optionally freeze XP
                 return;
             }
 
             // Reset bar for next milestone
-            xpProgressBar?.UpdateBar(0f, 0f, milestoneThresholds[milestonesReached]);
+            //xpProgressBar?.UpdateBar(0f, 0f, milestoneThresholds[milestonesReached]);
         }
 
         // Update XP bar toward current milestone
         if (milestonesReached < 3)
         {
-            xpProgressBar?.UpdateBar(currentExp, 0f, milestoneThresholds[milestonesReached]);
+            //xpProgressBar?.UpdateBar(currentExp, 0f, milestoneThresholds[milestonesReached]);
+
+            float totalProgress = GetTotalProgress();
+            milestoneProgressBarUI?.UpdateProgress(totalProgress);
         }
     }
-
+    private float GetTotalProgress()
+    {
+        float earned = 0f;
+        for (int i = 0; i < milestonesReached; i++)
+        {
+            earned += milestoneThresholds[i];
+        }
+        earned += currentExp;
+        return earned / roundTotalExp;
+    }
     /// <summary>
     /// Call this when the round ends.
     /// </summary>
     public void EndRound()
     {
-        // Reward 1 permanent skill point
-        UpgradeManager.Instance?.AddSkillPoint(1);
+        UpgradeManager.Instance?.AddSkillPoint(1); // Permanent reward
 
-        // Pass earned PUPs to PowerUp system
-        //PowerUpManager.Instance?.AddPoints(currentPUP);
+        availablePUPForShop = currentPUP;          // Lock in current PUPs
+        OnPUPChanged?.Invoke(availablePUPForShop); // Update UI
 
-        // Trigger round feedback/UI
-        OnRoundEnded?.Invoke();
+        OnRoundEnded?.Invoke();                    // Event for other systems
 
-        // Reset round-specific values
-        ResetRoundProgress();
+        ResetRoundProgress();                      // Reset XP/milestones — NOT powerup shop points
     }
 
     public void ResetRoundProgress()
@@ -110,10 +120,25 @@ public class ProgressManager : MonoBehaviour
         currentPUP = 0;
         CalculateMilestones();
 
-        xpProgressBar?.SetBar(0f, 0f, roundTotalExp);
+        //xpProgressBar?.SetBar(0f, 0f, roundTotalExp);
+        milestoneProgressBarUI?.ResetProgress();
         OnPUPChanged?.Invoke(currentPUP);
     }
-
+    public void ClearRemainingPUP()
+    {
+        availablePUPForShop = 0;
+        OnPUPChanged?.Invoke(availablePUPForShop); // Clear the UI
+    }
+    public bool SpendPowerUpPoint()
+    {
+        if (availablePUPForShop > 0)
+        {
+            availablePUPForShop--;
+            OnPUPChanged?.Invoke(availablePUPForShop);
+            return true;
+        }
+        return false;
+    }
     #endregion
 
     #region Private Methods
@@ -122,7 +147,7 @@ public class ProgressManager : MonoBehaviour
         milestoneThresholds = new float[3];
         for (int i = 0; i < 3; i++)
         {
-            milestoneThresholds[i] = roundTotalExp * ((i + 1) / 3f);
+            milestoneThresholds[i] = roundTotalExp * ((i + 1) / 3f); // i.e., 33%, 66%, 100%
         }
     }
     #endregion
@@ -131,7 +156,7 @@ public class ProgressManager : MonoBehaviour
     public int GetMilestonesReached() => milestonesReached;
     public float GetCurrentExp() => currentExp;
     public int GetCurrentPUP() => currentPUP;
-    public float GetNextMilestoneThreshold() =>
-        milestonesReached < 3 ? milestoneThresholds[milestonesReached] : roundTotalExp;
+    public int GetAvailablePUP() => availablePUPForShop;
+    public float GetNextMilestoneThreshold() => milestonesReached < 3 ? milestoneThresholds[milestonesReached] : roundTotalExp;
     #endregion
 }

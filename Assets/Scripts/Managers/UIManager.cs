@@ -79,6 +79,12 @@ public class UIManager : MonoBehaviour
     [SerializeField] private GameObject uiFloatingTextPrefab;
     [Tooltip("RectTransform that defines spawn position for floating text.")]
     [SerializeField] private RectTransform floatingTextSpawnPoint;
+
+    [Header("DEBUG")]
+    [SerializeField] private TextMeshProUGUI PUPText;
+    [SerializeField] private TextMeshProUGUI PUPsToSpedText;
+    [SerializeField] private TextMeshProUGUI skillPointText;
+
     #endregion
 
     #region Unity Callbacks
@@ -121,15 +127,10 @@ public class UIManager : MonoBehaviour
         scoreText.text = "Score: " + ScoreManager.Instance.GetCurrentScore();
         waveText.text = GameManager.Instance.GetCurrentWave().ToString();
         killChainMultiplier.text = KillChainManager.Instance.GetKillChainMultiplier() + "X";
-        //currentPlayerLevel.text = "LVL:" + ProgressManager.Instance.GetCurrentLevel().ToString();
 
-        //playerHealthSlider.maxValue = PlayerSettings.Instance.CurrentMaxHealth;
-        //playerHealthSlider.value = PlayerSettings.Instance.CurrentHealth;
-        //playerHealthText.text = $"HP: {(int)PlayerSettings.Instance.CurrentHealth} / {(int)PlayerSettings.Instance.CurrentMaxHealth}";
-
-        //playerExpSlider.maxValue = ProgressManager.Instance.GetEXPTillNextLevel();
-        //playerExpSlider.value = ProgressManager.Instance.GetCurrentEXP();
-        //expValueText.text = $"EXP: {(int)ProgressManager.Instance.GetCurrentEXP()} / {(int)ProgressManager.Instance.GetEXPTillNextLevel()}";
+        PUPText.text = ProgressManager.Instance.GetCurrentPUP().ToString();
+        PUPsToSpedText.text = ProgressManager.Instance.GetAvailablePUP().ToString();
+        skillPointText.text = UpgradeManager.Instance.GetCurrentSkillPoints().ToString();
     }
     #endregion
 
@@ -164,15 +165,6 @@ public class UIManager : MonoBehaviour
         scoreText.text = "Score: " + ScoreManager.Instance.GetCurrentScore();
         waveText.text = GameManager.Instance.GetCurrentWave().ToString();
         killChainMultiplier.text = KillChainManager.Instance.GetKillChainMultiplier().ToString();
-        //currentPlayerLevel.text = "LVL:" + ProgressManager.Instance.GetCurrentLevel().ToString();
-
-        //playerHealthSlider.maxValue = PlayerSettings.Instance.CurrentMaxHealth;
-        //playerHealthSlider.value = PlayerSettings.Instance.CurrentHealth;
-        //playerHealthText.text = $"HP: {(int)PlayerSettings.Instance.CurrentHealth} / {(int)PlayerSettings.Instance.CurrentMaxHealth}";
-
-        //playerExpSlider.maxValue = ProgressManager.Instance.GetEXPTillNextLevel();
-        //playerExpSlider.value = ProgressManager.Instance.GetCurrentEXP();
-        //expValueText.text = $"EXP: {(int)ProgressManager.Instance.GetCurrentEXP()} / {(int)ProgressManager.Instance.GetEXPTillNextLevel()}";
     }
     #endregion
 
@@ -199,7 +191,18 @@ public class UIManager : MonoBehaviour
             Destroy(child.gameObject);
     }
     #endregion
+    #region Break Round UI
+    /// <summary>
+    /// Displays a special message for break rounds (e.g. "System Failure. No Enemies Spawned").
+    /// </summary>
+    public void ShowBreakRound(int waveNumber)
+    {
+        ShowFloatingText($"Round {waveNumber}: SYSTEM GLITCH — NO ENEMIES SPAWNED");
 
+        // Optional: Add a separate feedback or animation here
+        // You could also trigger a glitch visual/audio using MoreMountains.Feedbacks
+    }
+    #endregion
     #region Wave Completion UI
     /// <summary>
     /// Displays wave complete text, then hides it after delay.
@@ -256,7 +259,7 @@ public class UIManager : MonoBehaviour
     /// </summary>
     private void ShowUpgradeControls(bool isAvailable)
     {
-        readyButton.gameObject.SetActive(isAvailable);
+        //readyButton.gameObject.SetActive(isAvailable);
         upgradeHoldButtonParent.SetActive(isAvailable);
         if (!isAvailable) SetUpgradeHoldProgress(0f);
     }

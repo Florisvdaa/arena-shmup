@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -51,11 +51,16 @@ public class GameManager : MonoBehaviour
         canPlayerMove = false;
         StartCoroutine(OnWaveCompleteCoroutine());
     }
-
+    public void OnBreakRound(int waveNumber)
+    {
+        canPlayerMove = false;
+        UIManager.Instance.ShowBreakRound(waveNumber);
+    }
     public void PlayerReadyForNextWave()
     {
         UIManager.Instance.HideUpgradeUI();
         CameraSwitcher.Instance.SetGameCam();
+        ProgressManager.Instance.ClearRemainingPUP();
         StartCoroutine(GameStartCountdown());
     }
     #endregion
@@ -80,8 +85,8 @@ public class GameManager : MonoBehaviour
 
     private IEnumerator OnWaveCompleteCoroutine()
     {
-        //UIManager.Instance.ShowWaveComplete(LastWaveKills);
         yield return new WaitForSeconds(0.5f);
+        ProgressManager.Instance.EndRound();
         UIManager.Instance.ShowUpgradeUI();
     }
     #endregion

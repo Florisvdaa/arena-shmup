@@ -35,6 +35,7 @@ public class PlayerSettings : MonoBehaviour
     [SerializeField] private MMF_Player upgradeFeedback;
     [Header("HealthBar ref")]
     [SerializeField] private MMProgressBar progressBar;
+    [SerializeField] private RectTransform progressBarRectTransform;
     [Header("Dash Settings")]
     [SerializeField] private float dashSpeed = 20f;
     [SerializeField] private float dashDuration = 0.2f;
@@ -47,6 +48,8 @@ public class PlayerSettings : MonoBehaviour
     private float currentMovementSpeed;
     private float currentFireRate;
     private float currentExpMultiplier;
+
+    private Vector3 progressBarRotation;
 
     public float CurrentMaxHealth
     {
@@ -120,6 +123,7 @@ public class PlayerSettings : MonoBehaviour
         if (progressBar != null)
         {
             progressBar.UpdateBar(currentHealth, 0f, currentMaxHealth);
+            progressBarRectTransform.Rotate(progressBarRotation);
         }
     }
     #endregion
