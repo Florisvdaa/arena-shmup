@@ -12,7 +12,7 @@ public class ScoreManager : MonoBehaviour
     [SerializeField] private int score = 0;
     [SerializeField] private int scoreMultipier = 0;
 
-    [SerializeField] private MMF_Player textSpawner;
+    //[SerializeField] private MMF_Player textSpawner;
 
     private void Awake()
     {

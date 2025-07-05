@@ -42,7 +42,8 @@ public class CameraSwitcher : MonoBehaviour
     /// </summary>
     private void Start()
     {
-        SetMainMenuCam();
+        //SetMainMenuCam();
+        SetGameCam();
     }
     #endregion
 

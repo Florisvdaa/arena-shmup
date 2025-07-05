@@ -32,6 +32,10 @@ public class GameManager : MonoBehaviour
     /// </summary>
     public int LastWaveKills { get; internal set; }
 
+    private void Start()
+    {
+        StartGame();
+    }
     public void StartGame()
     {
         UIManager.Instance.UnsetMainMenu();
@@ -58,7 +62,7 @@ public class GameManager : MonoBehaviour
     }
     public void PlayerReadyForNextWave()
     {
-        UIManager.Instance.HideUpgradeUI();
+        //UIManager.Instance.HideUpgradeUI();
         CameraSwitcher.Instance.SetGameCam();
         ProgressManager.Instance.ClearRemainingPUP();
         StartCoroutine(GameStartCountdown());
@@ -85,9 +89,12 @@ public class GameManager : MonoBehaviour
 
     private IEnumerator OnWaveCompleteCoroutine()
     {
-        yield return new WaitForSeconds(0.5f);
-        ProgressManager.Instance.EndRound();
-        UIManager.Instance.ShowUpgradeUI();
+        yield return new WaitForSeconds(1.5f);
+        
+        StartGame();
+        
+        //ProgressManager.Instance.EndRound();
+        //UIManager.Instance.ShowUpgradeUI();
     }
     #endregion
     #region Unity Callbacks

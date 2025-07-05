@@ -44,29 +44,29 @@ public class UIManager : MonoBehaviour
     [Tooltip("Displays player's current level.")]
     [SerializeField] private TextMeshProUGUI currentPlayerLevel;
     [Tooltip("Slider for player health.")]
-    [SerializeField] private Slider playerHealthSlider;
-    [Tooltip("Text for player health value.")]
-    [SerializeField] private TextMeshProUGUI playerHealthText;
-    [Tooltip("Slider for player EXP.")]
-    [SerializeField] private Slider playerExpSlider;
-    [Tooltip("Text for EXP values.")]
-    [SerializeField] private TextMeshProUGUI expValueText;
+    //[SerializeField] private Slider playerHealthSlider;
+    //[Tooltip("Text for player health value.")]
+    //[SerializeField] private TextMeshProUGUI playerHealthText;
+    //[Tooltip("Slider for player EXP.")]
+    //[SerializeField] private Slider playerExpSlider;
+    //[Tooltip("Text for EXP values.")]
+    //[SerializeField] private TextMeshProUGUI expValueText;
 
     [Header("Upgrade UI")]
-    [Tooltip("Parent object for upgrade menu.")]
-    [SerializeField] private GameObject upgradeParent;
-    [Tooltip("Parent object for upgrade hold button and slider.")]
-    [SerializeField] private GameObject upgradeHoldButtonParent;
-    [Tooltip("Image used as upgrade hold progress.")]
-    [SerializeField] private Image upgradeHoldImage;
-    [Tooltip("Button to confirm upgrade.")]
-    [SerializeField] private Button readyButton;
-    [Tooltip("Text object shown when wave is complete.")]
+    //[Tooltip("Parent object for upgrade menu.")]
+    //[SerializeField] private GameObject upgradeParent;
+    //[Tooltip("Parent object for upgrade hold button and slider.")]
+    //[SerializeField] private GameObject upgradeHoldButtonParent;
+    //[Tooltip("Image used as upgrade hold progress.")]
+    //[SerializeField] private Image upgradeHoldImage;
+    //[Tooltip("Button to confirm upgrade.")]
+    //[SerializeField] private Button readyButton;
+    //[Tooltip("Text object shown when wave is complete.")]
     [SerializeField] private GameObject waveCompleteText;
 
-    [Header("Score Display")]
-    [Tooltip("Text showing current score.")]
-    [SerializeField] private TextMeshProUGUI scoreText;
+    //[Header("Score Display")]
+    //[Tooltip("Text showing current score.")]
+    //[SerializeField] private TextMeshProUGUI scoreText;
 
     [Header("Countdown Floating Text")]
     [Tooltip("Prefab for countdown floating text.")]
@@ -80,10 +80,10 @@ public class UIManager : MonoBehaviour
     [Tooltip("RectTransform that defines spawn position for floating text.")]
     [SerializeField] private RectTransform floatingTextSpawnPoint;
 
-    [Header("DEBUG")]
-    [SerializeField] private TextMeshProUGUI PUPText;
-    [SerializeField] private TextMeshProUGUI PUPsToSpedText;
-    [SerializeField] private TextMeshProUGUI skillPointText;
+    //[Header("DEBUG")]
+    //[SerializeField] private TextMeshProUGUI PUPText;
+    //[SerializeField] private TextMeshProUGUI PUPsToSpedText;
+    //[SerializeField] private TextMeshProUGUI skillPointText;
 
     #endregion
 
@@ -102,10 +102,10 @@ public class UIManager : MonoBehaviour
         DontDestroyOnLoad(gameObject);
 
         // Ensure animators use unscaled delta time
-        foreach (var anim in uiAnimators)
-            anim.updateMode = AnimatorUpdateMode.UnscaledTime;
+        //foreach (var anim in uiAnimators)
+        //    anim.updateMode = AnimatorUpdateMode.UnscaledTime;
 
-        ShowUpgradeControls(false);
+        //ShowUpgradeControls(false);
         SetupButtons();
         SetMainMenu();
     }
@@ -124,13 +124,13 @@ public class UIManager : MonoBehaviour
     /// </summary>
     private void Update()
     {
-        scoreText.text = "Score: " + ScoreManager.Instance.GetCurrentScore();
+        //scoreText.text = "Score: " + ScoreManager.Instance.GetCurrentScore();
         waveText.text = GameManager.Instance.GetCurrentWave().ToString();
         killChainMultiplier.text = KillChainManager.Instance.GetKillChainMultiplier() + "X";
-
-        PUPText.text = ProgressManager.Instance.GetCurrentPUP().ToString();
-        PUPsToSpedText.text = ProgressManager.Instance.GetAvailablePUP().ToString();
-        skillPointText.text = UpgradeManager.Instance.GetCurrentSkillPoints().ToString();
+        
+        //PUPText.text = ProgressManager.Instance.GetCurrentPUP().ToString();
+        //PUPsToSpedText.text = ProgressManager.Instance.GetAvailablePUP().ToString();
+        //skillPointText.text = UpgradeManager.Instance.GetCurrentSkillPoints().ToString();
     }
     #endregion
 
@@ -162,7 +162,7 @@ public class UIManager : MonoBehaviour
     /// </summary>
     private void UpdateAllUI()
     {
-        scoreText.text = "Score: " + ScoreManager.Instance.GetCurrentScore();
+        //scoreText.text = "Score: " + ScoreManager.Instance.GetCurrentScore();
         waveText.text = GameManager.Instance.GetCurrentWave().ToString();
         killChainMultiplier.text = KillChainManager.Instance.GetKillChainMultiplier().ToString();
     }
@@ -222,12 +222,12 @@ public class UIManager : MonoBehaviour
     /// <summary>
     /// Shows the upgrade selection UI.
     /// </summary>
-    public void ShowUpgradeUI() => upgradeParent.SetActive(true);
+    //public void ShowUpgradeUI() => upgradeParent.SetActive(true);
 
     /// <summary>
     /// Hides the upgrade UI.
     /// </summary>
-    public void HideUpgradeUI() => upgradeParent.SetActive(false);
+    //public void HideUpgradeUI() => upgradeParent.SetActive(false);
     #endregion
 
     #region Floating Text UI
@@ -257,39 +257,39 @@ public class UIManager : MonoBehaviour
     /// <summary>
     /// Enables or disables upgrade buttons based on availability.
     /// </summary>
-    private void ShowUpgradeControls(bool isAvailable)
-    {
-        //readyButton.gameObject.SetActive(isAvailable);
-        upgradeHoldButtonParent.SetActive(isAvailable);
-        if (!isAvailable) SetUpgradeHoldProgress(0f);
-    }
+    //private void ShowUpgradeControls(bool isAvailable)
+    //{
+    //    //readyButton.gameObject.SetActive(isAvailable);
+    //    upgradeHoldButtonParent.SetActive(isAvailable);
+    //    if (!isAvailable) SetUpgradeHoldProgress(0f);
+    //}
 
-    /// <summary>
-    /// Updates fill amount of upgrade hold slider.
-    /// </summary>
-    public void SetUpgradeHoldProgress(float normalized)
-    {
-        upgradeHoldImage.fillAmount = Mathf.Clamp01(normalized);
-    }
+    ///// <summary>
+    ///// Updates fill amount of upgrade hold slider.
+    ///// </summary>
+    //public void SetUpgradeHoldProgress(float normalized)
+    //{
+    //    upgradeHoldImage.fillAmount = Mathf.Clamp01(normalized);
+    //}
 
-    /// <summary>
-    /// Pauses game and shows upgrade menu.
-    /// </summary>
-    public void ShowUpgradeMenu()
-    {
-        TimeManager.Instance.PauseGame();
-        upgradeParent.SetActive(true);
-    }
+    ///// <summary>
+    ///// Pauses game and shows upgrade menu.
+    ///// </summary>
+    //public void ShowUpgradeMenu()
+    //{
+    //    TimeManager.Instance.PauseGame();
+    //    upgradeParent.SetActive(true);
+    //}
 
-    /// <summary>
-    /// Hides upgrade menu and resumes game.
-    /// </summary>
-    public void HideUpgradeMenu()
-    {
-        upgradeParent.SetActive(false);
-        GameManager.Instance.PlayerReadyForNextWave();
-        //TimeManager.Instance.ResumeGame();
-    }
+    ///// <summary>
+    ///// Hides upgrade menu and resumes game.
+    ///// </summary>
+    //public void HideUpgradeMenu()
+    //{
+    //    upgradeParent.SetActive(false);
+    //    GameManager.Instance.PlayerReadyForNextWave();
+    //    //TimeManager.Instance.ResumeGame();
+    //}
     #endregion
 
     #region Button Setup
@@ -298,8 +298,8 @@ public class UIManager : MonoBehaviour
     /// </summary>
     private void SetupButtons()
     {
-        startButton.onClick.AddListener(GameManager.Instance.StartGame);
-        readyButton.onClick.AddListener(HideUpgradeMenu);
+        //startButton.onClick.AddListener(GameManager.Instance.StartGame);
+        //readyButton.onClick.AddListener(HideUpgradeMenu);
     }
     #endregion
 

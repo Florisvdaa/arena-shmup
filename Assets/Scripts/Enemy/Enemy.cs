@@ -128,7 +128,7 @@ public class Enemy : MonoBehaviour
         {
             // Track kill and spawn pickup
             KillChainManager.Instance.RegisterKill();
-            PickUpSpawner.Instance.TrySpawnPickup(transform.position);
+            //PickUpSpawner.Instance.TrySpawnPickup(transform.position);
 
             // Award experience
             ProgressManager.Instance.GainExp(CalculateEXP());

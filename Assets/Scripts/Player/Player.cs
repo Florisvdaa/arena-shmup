@@ -72,11 +72,11 @@ public class Player : MonoBehaviour
         if (isHoldingUpgrade)
         {
             upgradeHoldTimer += Time.unscaledDeltaTime;
-            UIManager.Instance.SetUpgradeHoldProgress(upgradeHoldTimer / upgradeHoldDuration);
+            //UIManager.Instance.SetUpgradeHoldProgress(upgradeHoldTimer / upgradeHoldDuration);
 
             if (upgradeHoldTimer >= upgradeHoldDuration)
             {
-                TriggerUpgradeScreen();
+                //TriggerUpgradeScreen();
                 OnUpgradeCanceled(default);
             }
         }
@@ -125,7 +125,7 @@ public class Player : MonoBehaviour
     {
         isHoldingUpgrade = false;
         upgradeHoldTimer = 0f;
-        UIManager.Instance.SetUpgradeHoldProgress(0f);
+        //UIManager.Instance.SetUpgradeHoldProgress(0f);
     }
     private void OnDashPerformed(InputAction.CallbackContext ctx)
     {
@@ -196,10 +196,10 @@ public class Player : MonoBehaviour
     #endregion
 
     #region Upgrade
-    private void TriggerUpgradeScreen()
-    {
-        UIManager.Instance.ShowUpgradeMenu();
-    }
+    //private void TriggerUpgradeScreen()
+    //{
+    //    UIManager.Instance.ShowUpgradeMenu();
+    //}
     #endregion
 
     #region Input setup

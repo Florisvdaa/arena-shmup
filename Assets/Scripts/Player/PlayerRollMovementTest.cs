@@ -98,7 +98,7 @@ public class PlayerRollMovementTest : MonoBehaviour
     {
         isHoldingUpgrade = false;
         upgradeHoldTimer = 0f;
-        UIManager.Instance.SetUpgradeHoldProgress(0f);
+        //UIManager.Instance.SetUpgradeHoldProgress(0f);
     }
     #endregion
 
