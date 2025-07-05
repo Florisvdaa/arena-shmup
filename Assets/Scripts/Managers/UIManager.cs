@@ -127,10 +127,6 @@ public class UIManager : MonoBehaviour
         //scoreText.text = "Score: " + ScoreManager.Instance.GetCurrentScore();
         waveText.text = GameManager.Instance.GetCurrentWave().ToString();
         killChainMultiplier.text = KillChainManager.Instance.GetKillChainMultiplier() + "X";
-        
-        //PUPText.text = ProgressManager.Instance.GetCurrentPUP().ToString();
-        //PUPsToSpedText.text = ProgressManager.Instance.GetAvailablePUP().ToString();
-        //skillPointText.text = UpgradeManager.Instance.GetCurrentSkillPoints().ToString();
     }
     #endregion
 

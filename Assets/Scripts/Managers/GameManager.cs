@@ -7,24 +7,14 @@ using UnityEngine;
 /// </summary>
 public class GameManager : MonoBehaviour
 {
-    #region Singleton
     public static GameManager Instance { get; private set; }
-    #endregion
 
-    #region Inspector Fields
-    [Header("Player Reference")]
-    [Tooltip("Player GameObject in the scene.")]
     [SerializeField] private GameObject player;
-    [Tooltip("Transform where the player is tracked during gameplay.")]
     [SerializeField] private Transform currentPlayerTransform;
-    [Tooltip("Starting position for the player at game start or new wave.")]
     [SerializeField] private Transform playerStartPosition;
-    #endregion
 
-    #region Private Fields
     private int currentWave = 0;
     private bool canPlayerMove;
-    #endregion
 
     #region Public API
     /// <summary>
@@ -64,7 +54,10 @@ public class GameManager : MonoBehaviour
     {
         //UIManager.Instance.HideUpgradeUI();
         CameraSwitcher.Instance.SetGameCam();
-        ProgressManager.Instance.ClearRemainingPUP();
+        StartCoroutine(GameStartCountdown());
+    }
+    public void PlayerChoseUpgrade()
+    {
         StartCoroutine(GameStartCountdown());
     }
     #endregion
@@ -90,9 +83,10 @@ public class GameManager : MonoBehaviour
     private IEnumerator OnWaveCompleteCoroutine()
     {
         yield return new WaitForSeconds(1.5f);
-        
-        StartGame();
-        
+        UpgradeManager.Instance.ShowUpgradeOptions();
+
+        //StartCoroutine(GameStartCountdown());
+
         //ProgressManager.Instance.EndRound();
         //UIManager.Instance.ShowUpgradeUI();
     }

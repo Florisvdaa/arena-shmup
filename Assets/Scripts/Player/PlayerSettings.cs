@@ -132,6 +132,7 @@ public class PlayerSettings : MonoBehaviour
     public void IncreaseSpeed(float amount)
     {
         CurrentMovementSpeed += amount;
+        Debug.Log($"Added: {amount}, new speed: {CurrentMovementSpeed}");
         upgradeFeedback?.PlayFeedbacks();
     }
     public void IncreaseFireRate(float amount)
