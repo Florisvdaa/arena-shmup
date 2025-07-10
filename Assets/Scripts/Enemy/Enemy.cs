@@ -75,6 +75,18 @@ public class Enemy : MonoBehaviour
         }
     }
 
+    public void Initialize(float health, float damage)
+    {
+        this.health = Mathf.RoundToInt(health);
+        this.damage = Mathf.RoundToInt(damage);
+
+        if (agent != null)
+        {
+            agent.speed = movementSpeed;
+        }
+    }
+
+
     /// <summary>
     /// Triggered on collider enter; applies damage to player and handles self-death.
     /// </summary>

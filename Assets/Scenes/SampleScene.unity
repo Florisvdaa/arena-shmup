@@ -9039,6 +9039,11 @@ MonoBehaviour:
   spawnDecreasePerRound: 0.1
   minSpawnInterval: 0.5
   roundDuration: 15
+  baseEnemyHealth: 10
+  healthIncreasePerWave: 5
+  baseEnemyDamage: 1
+  damageIncreasePerWave: 0.5
+  miniBossPrefab: {fileID: 8589901890916539718, guid: 35f21b9456ef8934295bd52c87cb174e, type: 3}
 --- !u!4 &1319228594 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 8566766532000406799, guid: cf197652500b3874a8c8316de8f01d70, type: 3}
@@ -12900,10 +12905,50 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1535649820538070168, guid: 20f1d47ce0ba48140831c23bd0bf32d0, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1535649820538070168, guid: 20f1d47ce0ba48140831c23bd0bf32d0, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1535649820538070168, guid: 20f1d47ce0ba48140831c23bd0bf32d0, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2183497720891353849, guid: 20f1d47ce0ba48140831c23bd0bf32d0, type: 3}
+      propertyPath: m_Name
+      value: Upgrade UI
+      objectReference: {fileID: 0}
+    - target: {fileID: 3869738630832388634, guid: 20f1d47ce0ba48140831c23bd0bf32d0, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3869738630832388634, guid: 20f1d47ce0ba48140831c23bd0bf32d0, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3869738630832388634, guid: 20f1d47ce0ba48140831c23bd0bf32d0, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5994077780041332183, guid: 20f1d47ce0ba48140831c23bd0bf32d0, type: 3}
       propertyPath: m_Camera
       value: 
       objectReference: {fileID: 800755526}
+    - target: {fileID: 7321531397996394270, guid: 20f1d47ce0ba48140831c23bd0bf32d0, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7321531397996394270, guid: 20f1d47ce0ba48140831c23bd0bf32d0, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7321531397996394270, guid: 20f1d47ce0ba48140831c23bd0bf32d0, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8295823882258657592, guid: 20f1d47ce0ba48140831c23bd0bf32d0, type: 3}
       propertyPath: m_Name
       value: Canvas

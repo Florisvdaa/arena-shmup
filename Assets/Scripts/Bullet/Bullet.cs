@@ -8,9 +8,9 @@ public class Bullet : MonoBehaviour
     [SerializeField] private float speed = 50f;
     [SerializeField] private float lifetime = 2f;
     [SerializeField] private GameObject impactPrefab;
-    [SerializeField] private int damage = 1;
     [SerializeField] private float bulletHitSize = 1f;
     [SerializeField] private float bulletHitDuration = 2f;
+    private int Damage => Mathf.RoundToInt(PlayerSettings.Instance.CurrentFireDamage);
 
     private float timer;
 
@@ -39,7 +39,7 @@ public class Bullet : MonoBehaviour
         if (other.CompareTag("Enemy"))
         {
             //Debug.Log("[Bullet] Hit Enemy");
-            other.GetComponent<Enemy>()?.TakeDamage(damage);
+            other.GetComponent<Enemy>()?.TakeDamage(Damage);
             SpawnImpact();
             ReturnToPool();
         }

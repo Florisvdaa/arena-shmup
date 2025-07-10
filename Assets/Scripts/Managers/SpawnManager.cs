@@ -1,6 +1,5 @@
 using System.Collections;
 using System.Collections.Generic;
-using System.Runtime.CompilerServices;
 using UnityEngine;
 
 public class SpawnManager : MonoBehaviour
@@ -17,9 +16,26 @@ public class SpawnManager : MonoBehaviour
     [SerializeField] private float minSpawnInterval = 0.5f;
     [SerializeField] private float roundDuration = 90f;
 
+    [Header("Enemy Scaling")]
+    [SerializeField] private float baseEnemyHealth = 1f;
+    [SerializeField] private float healthIncreasePerWave = 1.5f;
+    [SerializeField] private float baseEnemyDamage = 1f;
+    [SerializeField] private float damageIncreasePerWave = 0.5f;
+
+
+    [Header("Boss Settings")]
+    [SerializeField] private GameObject miniBossPrefab;
+
     private Coroutine spawnRoutine;
     private List<Enemy> activeEnemies = new List<Enemy>();
     private int killsThisWave;
+    private int currentWave;
+
+    // Public accessors for scaling values
+    public float BaseEnemyHealth => baseEnemyHealth;
+    public float HealthIncreasePerWave => healthIncreasePerWave;
+    public float BaseEnemyDamage => baseEnemyDamage;
+    public float DamageIncreasePerWave => damageIncreasePerWave;
 
     private void Awake()
     {
@@ -37,11 +53,13 @@ public class SpawnManager : MonoBehaviour
         foreach (var e in activeEnemies) if (e != null) Destroy(e.gameObject);
         activeEnemies.Clear();
         killsThisWave = 0;
+        currentWave = waveNumber;
 
         // Handle break rounds
         if (waveNumber % 5 == 0)
         {
-            GameManager.Instance.OnBreakRound(waveNumber);
+            SpawnMiniBoss(waveNumber);
+            GameManager.Instance.OnBreakRound(waveNumber); // optional: trigger upgrade room etc.
             return;
         }
 
@@ -58,13 +76,26 @@ public class SpawnManager : MonoBehaviour
             var fxPrefab = pixelEffectPrefabs[Random.Range(0, pixelEffectPrefabs.Count)];
 
             var fx = Instantiate(fxPrefab, spawnPt.position, spawnPt.rotation);
-            fx.GetComponent<PixelEffectController>().Init(this);
+            fx.GetComponent<PixelEffectController>().Init(this, currentWave);
 
             yield return new WaitForSeconds(interval);
             elapsed += interval;
         }
 
         EndCurrentWave();
+    }
+
+    private void SpawnMiniBoss(int waveNumber)
+    {
+        var spawnPt = spawnTransformList[Random.Range(0, spawnTransformList.Count)];
+        var boss = Instantiate(miniBossPrefab, spawnPt.position, spawnPt.rotation);
+        var bossEnemy = boss.GetComponent<Enemy>();
+
+        float health = baseEnemyHealth * 5f + (waveNumber * healthIncreasePerWave);
+        float damage = baseEnemyDamage * 2f + (waveNumber * damageIncreasePerWave);
+        bossEnemy.Initialize(health, damage);
+
+        RegisterInstance(bossEnemy);
     }
 
     public void RegisterInstance(Enemy enemy)
