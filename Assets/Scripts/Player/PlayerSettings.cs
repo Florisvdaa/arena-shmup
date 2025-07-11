@@ -1,19 +1,13 @@
-using System.Collections;
-using System.Collections.Generic;
+using UnityEngine;
 using MoreMountains.Feedbacks;
 using MoreMountains.Tools;
-using UnityEngine;
+using System.Collections.Generic;
+using System.Collections;
 
-/// <summary>
-/// Holds default and current player stats, handles upgrades and boosts.
-/// </summary>
 public class PlayerSettings : MonoBehaviour
 {
-    #region Singleton
     public static PlayerSettings Instance { get; private set; }
-    #endregion
 
-    #region Inspector Fields
     [Header("Default Player Health")]
     [SerializeField] private float defaultMaxHealth = 10f;
 
@@ -24,12 +18,8 @@ public class PlayerSettings : MonoBehaviour
     [Header("Default Weapon")]
     [SerializeField] private Transform firePoint;
     [SerializeField] private float defaultFireRate = 0.2f;
+    [SerializeField] private float minFireRate = 0.05f;
     [SerializeField] private float defaultFireDamage = 1f;
-    [SerializeField] private float heatPerShot = 10f;
-    [SerializeField] private float overheatThreshold = 100f;
-    [SerializeField] private float overheatReleaseThreshold = 60f;
-    [SerializeField] private float coolRate = 25f;
-    [SerializeField] private MMF_Player overheatFeedback;
     [SerializeField] private MMF_Player shootFeedback;
 
     [Header("Default EXP")]
@@ -48,10 +38,9 @@ public class PlayerSettings : MonoBehaviour
     [SerializeField] private float dashCoolDown = 1f;
 
     [Header("Default Defense")]
-    [SerializeField] private float defaultDefenseMultiplier = 0f; // 0 = no defense
-    #endregion
+    [SerializeField] private float defaultDefenseMultiplier = 0f;
 
-    #region Runtime Fields & Properties
+    // Runtime fields
     private float currentMaxHealth;
     private float currentHealth;
     private float currentMovementSpeed;
@@ -78,15 +67,12 @@ public class PlayerSettings : MonoBehaviour
         set
         {
             currentHealth = Mathf.Clamp(value, 0f, CurrentMaxHealth);
-            if (progressBar != null)
-            {
-                progressBar.UpdateBar(currentHealth, 0f, CurrentMaxHealth);
-            }
+            progressBar?.UpdateBar(currentHealth, 0f, CurrentMaxHealth);
         }
     }
 
     public float CurrentMovementSpeed { get => currentMovementSpeed; set => currentMovementSpeed = Mathf.Max(0f, value); }
-    public float CurrentFireRate { get => currentFireRate; set => currentFireRate = Mathf.Max(0.01f, value); }
+    public float CurrentFireRate { get => currentFireRate; set => currentFireRate = Mathf.Clamp(value, minFireRate, 999f); }
     public float CurrentFireDamage { get => currentFireDamage; set => currentFireDamage = Mathf.Max(0f, value); }
     public float CurrentExpMultiplier { get => currentExpMultiplier; set => currentExpMultiplier = Mathf.Max(1f, value); }
     public float CurrentDefenseMultiplier => currentDefenseMultiplier;
@@ -94,18 +80,12 @@ public class PlayerSettings : MonoBehaviour
     public float DashSpeed => dashSpeed;
     public float DashDuration => dashDuration;
     public float DashCooldown => dashCoolDown;
-    public float HeatPerShot => heatPerShot;
-    public float OverheatThreshold => overheatThreshold;
-    public float OverheatReleaseThreshold => overheatReleaseThreshold;
-    public float CoolRate => coolRate;
+    public float MinFireRate => minFireRate;
     public Transform PlayerVisualTransform => playerVisualTransform;
     public Transform FirePoint => firePoint;
     public MMF_Player ShootFeedback => shootFeedback;
     public MMF_Player UpgradeFeedback => upgradeFeedback;
-    public MMF_Player OverheatFeedback => overheatFeedback;
-    #endregion
 
-    #region Unity Callbacks
     private void Awake()
     {
         if (Instance == null)
@@ -115,9 +95,7 @@ public class PlayerSettings : MonoBehaviour
         }
         else Destroy(gameObject);
     }
-    #endregion
 
-    #region Default Reset
     public void ResetToDefault()
     {
         CurrentMaxHealth = defaultMaxHealth;
@@ -137,19 +115,23 @@ public class PlayerSettings : MonoBehaviour
             progressBarRectTransform.Rotate(progressBarRotation);
         }
     }
-    #endregion
 
-    #region Stat Upgrades
+    // Upgrade methods
     public void IncreaseSpeed(float amount)
     {
         CurrentMovementSpeed += amount;
         upgradeFeedback?.PlayFeedbacks();
-        Debug.Log($"Added: {amount}, new speed: {CurrentMovementSpeed}");
     }
 
     public void IncreaseFireRate(float amount)
     {
-        CurrentFireRate = Mathf.Max(0.01f, CurrentFireRate - amount);
+        if (CurrentFireRate <= minFireRate)
+        {
+            Debug.Log("Fire rate already maxed out!");
+            return;
+        }
+
+        CurrentFireRate = Mathf.Max(minFireRate, CurrentFireRate - amount);
         upgradeFeedback?.PlayFeedbacks();
     }
 
@@ -159,7 +141,6 @@ public class PlayerSettings : MonoBehaviour
         CurrentHealth += amount;
         RefreshHealthBar();
         upgradeFeedback?.PlayFeedbacks();
-        Debug.Log($"Current max health: {currentMaxHealth} / Current Health: {currentHealth}");
     }
 
     public void IncreaseHealthByPercentage(float percentage)
@@ -178,14 +159,12 @@ public class PlayerSettings : MonoBehaviour
     {
         dashDuration += extraDuration;
         upgradeFeedback?.PlayFeedbacks();
-        Debug.Log($"Dash duration increased by {extraDuration}, now: {dashDuration}");
     }
 
     public void IncreaseFireDamage(float amount)
     {
         CurrentFireDamage += amount;
         upgradeFeedback?.PlayFeedbacks();
-        Debug.Log($"Fire damage increased by {amount}, now: {CurrentFireDamage}");
     }
 
     public void IncreaseDefense(float percentageReduction)
@@ -193,11 +172,8 @@ public class PlayerSettings : MonoBehaviour
         currentDefenseMultiplier += percentageReduction;
         currentDefenseMultiplier = Mathf.Clamp(currentDefenseMultiplier, 0f, 0.9f);
         upgradeFeedback?.PlayFeedbacks();
-        Debug.Log($"Defense increased, now reduces {currentDefenseMultiplier * 100}% damage.");
     }
-    #endregion
 
-    #region Timed Boosts
     public IEnumerator SpeedBoostCoroutine(float amount, float duration)
     {
         CurrentMovementSpeed += amount;
@@ -207,9 +183,8 @@ public class PlayerSettings : MonoBehaviour
 
     public IEnumerator FireRateBoostCoroutine(float amount, float duration)
     {
-        CurrentFireRate -= amount;
+        CurrentFireRate = Mathf.Max(minFireRate, CurrentFireRate - amount);
         yield return new WaitForSeconds(duration);
-        CurrentFireRate += amount;
+        CurrentFireRate = Mathf.Min(1f, CurrentFireRate + amount); // or store original value if needed
     }
-    #endregion
 }

@@ -7,7 +7,6 @@ using UnityEngine.AI;
 
 public class Enemy : MonoBehaviour
 {
-    #region Inspector Fields
     [Header("Enemy Settings")]
     [Tooltip("Transform used for enemy visuals (e.g., model or sprite).")]
     [SerializeField] private Transform enemyVisual;
@@ -21,14 +20,11 @@ public class Enemy : MonoBehaviour
     [SerializeField] private int score = 100;
     [Tooltip("Feedback played when the enemy dies.")]
     [SerializeField] private MMF_Player deathParticle;
-    #endregion
+    [SerializeField] private MMF_Player hitParticle;
 
-    #region Private Fields
     private NavMeshAgent agent;
     private Transform playerTargetTransform;
-    #endregion
 
-    #region Public Properties
     /// <summary>
     /// Exposes the serialized "damage" field so other scripts can read/write it.
     /// </summary>
@@ -37,16 +33,12 @@ public class Enemy : MonoBehaviour
         get => damage;
         set => damage = value;
     }
-    #endregion
 
-    #region Events
     /// <summary>
     /// Invoked when the enemy dies.
     /// </summary>
     public event Action OnDeath;
-    #endregion
 
-    #region Unity Callbacks
     /// <summary>
     /// Cache components and initialize movement settings.
     /// </summary>
@@ -77,8 +69,8 @@ public class Enemy : MonoBehaviour
 
     public void Initialize(float health, float damage)
     {
-        this.health = Mathf.RoundToInt(health);
-        this.damage = Mathf.RoundToInt(damage);
+        this.health += Mathf.RoundToInt(health);
+        this.damage += Mathf.RoundToInt(damage);
 
         if (agent != null)
         {
@@ -102,15 +94,15 @@ public class Enemy : MonoBehaviour
             Die(addScore: false);
         }
     }
-    #endregion
 
-    #region Public Methods
     /// <summary>
     /// Applies damage to the enemy and checks for death.
     /// </summary>
     /// <param name="amount">Amount of damage to apply.</param>
     public void TakeDamage(int amount)
     {
+        hitParticle.PlayFeedbacks();
+
         health -= amount;
         if (health <= 0)
         {
@@ -118,9 +110,7 @@ public class Enemy : MonoBehaviour
             Die(addScore: true);
         }
     }
-    #endregion
 
-    #region Private Methods
     /// <summary>
     /// Handles death feedback, score, pickups, and death timing.
     /// </summary>
@@ -138,6 +128,8 @@ public class Enemy : MonoBehaviour
 
         if (addScore)
         {
+            ScoreManager.Instance.AddScore(score);
+
             // Track kill and spawn pickup
             KillChainManager.Instance.RegisterKill();
             //PickUpSpawner.Instance.TrySpawnPickup(transform.position);
@@ -171,5 +163,4 @@ public class Enemy : MonoBehaviour
         OnDeath?.Invoke();
         Destroy(gameObject);
     }
-    #endregion
 }

@@ -28,7 +28,5 @@ public class ScoreManager : MonoBehaviour
         UIManager.Instance.ShowFloatingText(amount.ToString());
     }
 
-    #region References
     public int GetCurrentScore() => score;
-    #endregion
 }

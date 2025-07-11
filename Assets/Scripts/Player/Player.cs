@@ -8,13 +8,15 @@ using UnityEngine.InputSystem;
 /// </summary>
 public class Player : MonoBehaviour
 { 
-    #region Inspector Fields
     [Header("Movement Settings")]
     [Tooltip("Duration required to hold the upgrade input before opening the upgrade UI.")]
     [SerializeField] private float upgradeHoldDuration = 1.5f;
-    #endregion
 
-    #region Private Fields
+    [Header("Dash Bomb Settings")]
+    [SerializeField] private GameObject bombPrefab;
+    [SerializeField, Range(0f, 1f)] private float bombDropChance = 0.25f;
+    [SerializeField] private float bombDropOffsetBackwards = 1f;
+
     private Vector2 moveInput;
     private Rigidbody rb;
     private Transform playerVisual;
@@ -30,9 +32,7 @@ public class Player : MonoBehaviour
     private float dashTimer;
     private float dashCooldownTimer = 0f;
     private Vector3 dashDirection;
-    #endregion
 
-    #region Unity Callbacks
     /// <summary>
     /// Initialize references and subscribe to input events.
     /// </summary>
@@ -107,9 +107,7 @@ public class Player : MonoBehaviour
         }
         RotateVisualTowardsMouse();
     }
-    #endregion
 
-    #region Input Handlers
     private void OnMove(InputAction.CallbackContext ctx)
     {
         moveInput = ctx.ReadValue<Vector2>();
@@ -155,10 +153,27 @@ public class Player : MonoBehaviour
         }
 
         Debug.Log("Dash started!");
+        TryDropDashBomb();
     }
-    #endregion
 
-    #region Movement & Rotation
+    private void TryDropDashBomb()
+    {
+        if (bombPrefab == null) return;
+
+        float roll = Random.value;
+        if (roll <= bombDropChance)
+        {
+            Vector3 dropPosition = transform.position - dashDirection.normalized * bombDropOffsetBackwards;
+            Instantiate(bombPrefab, dropPosition, Quaternion.identity);
+            Debug.Log($" Bomb dropped! (Chance roll: {roll:F2})");
+        }
+        else
+        {
+            Debug.Log($"No bomb dropped. (Chance roll: {roll:F2})");
+        }
+    }
+
+
     private void HandleMovement()
     {
         Vector3 movement = new Vector3(moveInput.x, 0f, moveInput.y).normalized;
@@ -193,16 +208,6 @@ public class Player : MonoBehaviour
             Debug.Log("Dash ended. Cooldown started.");
         }
     }
-    #endregion
-
-    #region Upgrade
-    //private void TriggerUpgradeScreen()
-    //{
-    //    UIManager.Instance.ShowUpgradeMenu();
-    //}
-    #endregion
-
-    #region Input setup
     private void SetUpInputs()
     {
         inputActions.player.Move.performed += OnMove;
@@ -213,6 +218,5 @@ public class Player : MonoBehaviour
 
         inputActions.player.Dash.performed += OnDashPerformed;
     }
-    #endregion
 }
 

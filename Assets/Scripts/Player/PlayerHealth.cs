@@ -8,11 +8,8 @@ using UnityEngine;
 /// </summary>
 public class PlayerHealth : MonoBehaviour
 {
-    #region Private Fields
     private PlayerSettings playerSettings;
-    #endregion
 
-    #region Unity Callbacks
     private void Start()
     {
         playerSettings = GetComponent<PlayerSettings>();
@@ -21,9 +18,7 @@ public class PlayerHealth : MonoBehaviour
 
         //playerSettings.CurrentHealth = playerSettings.CurrentMaxHealth;
     }
-    #endregion
 
-    #region Public Methods
     public void TakeDamage(float amount)
     {
         FeedBackManager.Instance.PlayerDamageFeedback();
@@ -37,5 +32,4 @@ public class PlayerHealth : MonoBehaviour
         playerSettings.CurrentHealth += amount;
         Debug.Log($"Player healed {amount}. Current Health: {playerSettings.CurrentHealth}");
     }
-    #endregion
 }

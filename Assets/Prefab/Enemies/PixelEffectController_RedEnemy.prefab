@@ -45,7 +45,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e516385ae0ede2c438fee3b0c71f8b4d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  pixelCubePrefab: {fileID: 4231703569549873312, guid: 16f3f83867e5aa34991ac713705390f2, type: 3}
+  pixelCubePrefab: {fileID: 4231703569549873312, guid: 6340bcef7888ddd4cbe7139d649728f2, type: 3}
   minCubes: 3
   maxCubes: 10
   explosionForce: 5
@@ -301,7 +301,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 15840a7becacc9c47bf2b5d16923f898, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  pixelCubePrefab: {fileID: 4231703569549873312, guid: 71a6d2b928cb77141b0dd2c6d76282e6, type: 3}
+  pixelCubePrefab: {fileID: 4231703569549873312, guid: 78c3079822b2f414abded200c7777098, type: 3}
   spawnRadius: 2
   pullSpeed: 5
   delayBeforeSpawn: 0.7
@@ -523,7 +523,7 @@ GameObject:
   - component: {fileID: 311876584112866770}
   - component: {fileID: 942588022188319046}
   m_Layer: 0
-  m_Name: PixelEffectController
+  m_Name: PixelEffectController_RedEnemy
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -559,6 +559,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   chargeFeedback: {fileID: 1646097328878012593}
-  fusionEffectPrefab: {fileID: 1365538819899408, guid: 72a652ab7835362499c9686288610212, type: 3}
-  fusionFadeDuration: 1
-  enemyPrefab: {fileID: 1687061631194417197, guid: 314ca273e85c4d442b53e19ac2c0495a, type: 3}
+  enemyPrefab: {fileID: 1687061631194417197, guid: bca5d2bb0344297448fbfa5efa76f787, type: 3}

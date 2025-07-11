@@ -12,14 +12,11 @@ using UnityEngine.UI;
 /// </summary>
 public class UIManager : MonoBehaviour
 {
-    #region Singleton
     /// <summary>
     /// Global access point for the UIManager instance.
     /// </summary>
     public static UIManager Instance { get; private set; }
-    #endregion
 
-    #region Inspector Fields
     [Header("Canvas Settings")]
     [Tooltip("Main UI canvas for all UI elements.")]
     [SerializeField] private Canvas uiCanvas;
@@ -85,9 +82,7 @@ public class UIManager : MonoBehaviour
     //[SerializeField] private TextMeshProUGUI PUPsToSpedText;
     //[SerializeField] private TextMeshProUGUI skillPointText;
 
-    #endregion
 
-    #region Unity Callbacks
     /// <summary>
     /// Initialize singleton, animator update modes, and menu states.
     /// </summary>
@@ -100,12 +95,6 @@ public class UIManager : MonoBehaviour
         }
         Instance = this;
         DontDestroyOnLoad(gameObject);
-
-        // Ensure animators use unscaled delta time
-        //foreach (var anim in uiAnimators)
-        //    anim.updateMode = AnimatorUpdateMode.UnscaledTime;
-
-        //ShowUpgradeControls(false);
         SetupButtons();
         SetMainMenu();
     }
@@ -128,9 +117,7 @@ public class UIManager : MonoBehaviour
         waveText.text = GameManager.Instance.GetCurrentWave().ToString();
         killChainMultiplier.text = KillChainManager.Instance.GetKillChainMultiplier() + "X";
     }
-    #endregion
 
-    #region Menu Toggles
     /// <summary>
     /// Activate main menu UI.
     /// </summary>
@@ -150,9 +137,7 @@ public class UIManager : MonoBehaviour
     /// Deactivate in-game HUD.
     /// </summary>
     public void UnsetGameUI() => gameUI.SetActive(false);
-    #endregion
 
-    #region UI Initialization
     /// <summary>
     /// Sets initial values for all HUD elements.
     /// </summary>
@@ -162,9 +147,7 @@ public class UIManager : MonoBehaviour
         waveText.text = GameManager.Instance.GetCurrentWave().ToString();
         killChainMultiplier.text = KillChainManager.Instance.GetKillChainMultiplier().ToString();
     }
-    #endregion
 
-    #region Countdown UI
     /// <summary>
     /// Shows a floating countdown text with feedback.
     /// </summary>
@@ -186,8 +169,6 @@ public class UIManager : MonoBehaviour
         foreach (Transform child in countdownSpawnPoint)
             Destroy(child.gameObject);
     }
-    #endregion
-    #region Break Round UI
     /// <summary>
     /// Displays a special message for break rounds (e.g. "System Failure. No Enemies Spawned").
     /// </summary>
@@ -195,11 +176,8 @@ public class UIManager : MonoBehaviour
     {
         ShowFloatingText($"Round {waveNumber}: SYSTEM GLITCH — NO ENEMIES SPAWNED");
 
-        // Optional: Add a separate feedback or animation here
         // You could also trigger a glitch visual/audio using MoreMountains.Feedbacks
     }
-    #endregion
-    #region Wave Completion UI
     /// <summary>
     /// Displays wave complete text, then hides it after delay.
     /// </summary>
@@ -215,18 +193,6 @@ public class UIManager : MonoBehaviour
         waveCompleteText.SetActive(false);
     }
 
-    /// <summary>
-    /// Shows the upgrade selection UI.
-    /// </summary>
-    //public void ShowUpgradeUI() => upgradeParent.SetActive(true);
-
-    /// <summary>
-    /// Hides the upgrade UI.
-    /// </summary>
-    //public void HideUpgradeUI() => upgradeParent.SetActive(false);
-    #endregion
-
-    #region Floating Text UI
     /// <summary>
     /// Shows a generic floating text at the specified spawn point.
     /// </summary>
@@ -247,48 +213,7 @@ public class UIManager : MonoBehaviour
 
         Destroy(instance, 2f);
     }
-    #endregion
 
-    #region Upgrade Controls
-    /// <summary>
-    /// Enables or disables upgrade buttons based on availability.
-    /// </summary>
-    //private void ShowUpgradeControls(bool isAvailable)
-    //{
-    //    //readyButton.gameObject.SetActive(isAvailable);
-    //    upgradeHoldButtonParent.SetActive(isAvailable);
-    //    if (!isAvailable) SetUpgradeHoldProgress(0f);
-    //}
-
-    ///// <summary>
-    ///// Updates fill amount of upgrade hold slider.
-    ///// </summary>
-    //public void SetUpgradeHoldProgress(float normalized)
-    //{
-    //    upgradeHoldImage.fillAmount = Mathf.Clamp01(normalized);
-    //}
-
-    ///// <summary>
-    ///// Pauses game and shows upgrade menu.
-    ///// </summary>
-    //public void ShowUpgradeMenu()
-    //{
-    //    TimeManager.Instance.PauseGame();
-    //    upgradeParent.SetActive(true);
-    //}
-
-    ///// <summary>
-    ///// Hides upgrade menu and resumes game.
-    ///// </summary>
-    //public void HideUpgradeMenu()
-    //{
-    //    upgradeParent.SetActive(false);
-    //    GameManager.Instance.PlayerReadyForNextWave();
-    //    //TimeManager.Instance.ResumeGame();
-    //}
-    #endregion
-
-    #region Button Setup
     /// <summary>
     /// Configures button click listeners.
     /// </summary>
@@ -297,12 +222,9 @@ public class UIManager : MonoBehaviour
         //startButton.onClick.AddListener(GameManager.Instance.StartGame);
         //readyButton.onClick.AddListener(HideUpgradeMenu);
     }
-    #endregion
 
-    #region References
     /// <summary>
     /// Returns the main UI canvas.
     /// </summary>
     public Canvas GetUICanvas() => uiCanvas;
-    #endregion
 }
