@@ -308,6 +308,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   upgradeHoldDuration: 1.5
+  bombPrefab: {fileID: 3956452267595285713, guid: c7ec894d9699a5440b0ff67e463202d1, type: 3}
+  bombDropChance: 1
+  bombDropOffsetBackwards: 1
 --- !u!114 &1114115485219170746
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -356,14 +359,21 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   defaultMaxHealth: 10
-  defaultMovementSpeed: 5
+  defaultMovementSpeed: 7
   playerVisualTransform: {fileID: 7371569214186253230}
   firePoint: {fileID: 918673509637343314}
   defaultFireRate: 0.2
+  minFireRate: 0.05
+  defaultFireDamage: 1
   shootFeedback: {fileID: 4138695976858120946}
   defaultExpMultiplier: 1
   upgradeFeedback: {fileID: 0}
   progressBar: {fileID: 0}
+  progressBarRectTransform: {fileID: 0}
+  dashSpeed: 20
+  dashDuration: 0.2
+  dashCoolDown: 1
+  defaultDefenseMultiplier: 0
 --- !u!1 &7211775395857464970
 GameObject:
   m_ObjectHideFlags: 0

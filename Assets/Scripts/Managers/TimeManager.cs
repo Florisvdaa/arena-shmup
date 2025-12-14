@@ -7,28 +7,18 @@ using UnityEngine;
 /// </summary>
 public class TimeManager : MonoBehaviour
 {
-    #region Singleton
-    /// <summary>
-    /// Global access to the TimeManager instance.
-    /// </summary>
     public static TimeManager Instance { get; private set; }
-    #endregion
 
-    #region Inspector Fields
     [Tooltip("Scale factor applied when entering slow motion (0 = frozen, 1 = normal speed).")]
     [Range(0f, 1f)]
     public float slowMoScale = 0.2f;
-    #endregion
 
-    #region Private Fields
     private float _originalFixedDelta;
     /// <summary>
     /// Indicates whether the game is currently paused.
     /// </summary>
     public bool IsPaused { get; private set; }
-    #endregion
 
-    #region Unity Callbacks
     /// <summary>
     /// Initialize singleton, prevent duplicates, and cache original FixedDeltaTime.
     /// </summary>
@@ -43,9 +33,7 @@ public class TimeManager : MonoBehaviour
         DontDestroyOnLoad(gameObject);
         _originalFixedDelta = Time.fixedDeltaTime;
     }
-    #endregion
 
-    #region Public Methods
     /// <summary>
     /// Enter slow motion mode by scaling down time and fixed delta.
     /// </summary>
@@ -85,5 +73,4 @@ public class TimeManager : MonoBehaviour
         Time.fixedDeltaTime = _originalFixedDelta;
         IsPaused = false;
     }
-    #endregion
 }

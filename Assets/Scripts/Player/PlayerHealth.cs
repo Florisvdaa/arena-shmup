@@ -21,15 +21,9 @@ public class PlayerHealth : MonoBehaviour
 
     public void TakeDamage(float amount)
     {
-        FeedBackManager.Instance.PlayerDamageFeedback();
-        playerSettings.CurrentHealth -= amount;
-        if (playerSettings.CurrentHealth <= 0)
-            Debug.Log("Player is dead!");
     }
 
     public void Heal(int amount)
     {
-        playerSettings.CurrentHealth += amount;
-        Debug.Log($"Player healed {amount}. Current Health: {playerSettings.CurrentHealth}");
     }
 }
