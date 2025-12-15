@@ -53,6 +53,15 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Rotate"",
+                    ""type"": ""Value"",
+                    ""id"": ""40493e2a-112c-419f-a00a-048b85262336"",
+                    ""expectedControlType"": ""Vector2"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
                 }
             ],
             ""bindings"": [
@@ -143,6 +152,28 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
                     ""action"": ""Dash"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""ab582713-426d-4a82-aaa1-643a016eea36"",
+                    ""path"": ""<Gamepad>/leftShoulder"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Dash"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""aad9ad66-f8d0-4a87-bf81-63e7b6861517"",
+                    ""path"": ""<Gamepad>/rightStick"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Rotate"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -154,6 +185,7 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         m_player_Move = m_player.FindAction("Move", throwIfNotFound: true);
         m_player_Upgrade = m_player.FindAction("Upgrade", throwIfNotFound: true);
         m_player_Dash = m_player.FindAction("Dash", throwIfNotFound: true);
+        m_player_Rotate = m_player.FindAction("Rotate", throwIfNotFound: true);
     }
 
     ~@PlayerInputActions()
@@ -223,6 +255,7 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
     private readonly InputAction m_player_Move;
     private readonly InputAction m_player_Upgrade;
     private readonly InputAction m_player_Dash;
+    private readonly InputAction m_player_Rotate;
     public struct PlayerActions
     {
         private @PlayerInputActions m_Wrapper;
@@ -230,6 +263,7 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         public InputAction @Move => m_Wrapper.m_player_Move;
         public InputAction @Upgrade => m_Wrapper.m_player_Upgrade;
         public InputAction @Dash => m_Wrapper.m_player_Dash;
+        public InputAction @Rotate => m_Wrapper.m_player_Rotate;
         public InputActionMap Get() { return m_Wrapper.m_player; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -248,6 +282,9 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
             @Dash.started += instance.OnDash;
             @Dash.performed += instance.OnDash;
             @Dash.canceled += instance.OnDash;
+            @Rotate.started += instance.OnRotate;
+            @Rotate.performed += instance.OnRotate;
+            @Rotate.canceled += instance.OnRotate;
         }
 
         private void UnregisterCallbacks(IPlayerActions instance)
@@ -261,6 +298,9 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
             @Dash.started -= instance.OnDash;
             @Dash.performed -= instance.OnDash;
             @Dash.canceled -= instance.OnDash;
+            @Rotate.started -= instance.OnRotate;
+            @Rotate.performed -= instance.OnRotate;
+            @Rotate.canceled -= instance.OnRotate;
         }
 
         public void RemoveCallbacks(IPlayerActions instance)
@@ -283,5 +323,6 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         void OnMove(InputAction.CallbackContext context);
         void OnUpgrade(InputAction.CallbackContext context);
         void OnDash(InputAction.CallbackContext context);
+        void OnRotate(InputAction.CallbackContext context);
     }
 }
