@@ -7,12 +7,12 @@ using System.Collections;
 public class PlayerSettings : MonoBehaviour
 {
     [Header("Default player settings")]
-    private float defaultMovementSpeed = 5f;
-    private float defaultAcceleration = 20f;
-    private float defaultDeceleration = 25f;
-    private float defaultDashSpeed = 10f;
-    private float defaultDashDuation = .3f;
-    private float defaultDashCooldown = 1f;
+    [SerializeField] [Range(1f, 15f)] private float defaultMovementSpeed = 5f;
+    [SerializeField] [Range(1f, 100f)] private float defaultAcceleration = 20f;
+    [SerializeField] [Range(1f, 100f)] private float defaultDeceleration = 25f;
+    [SerializeField] [Range(1f, 100f)] private float defaultDashSpeed = 10f;
+    [SerializeField] [Range(0f, 1f)] private float defaultDashDuation = .3f;
+    [SerializeField] [Range(0f, 10f)] private float defaultDashCooldown = 1f;
     
     private int defaultHealth = 100;
 

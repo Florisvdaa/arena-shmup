@@ -26,10 +26,14 @@ public class Player : MonoBehaviour
 
     private PlayerSettings playerSettings;
 
+    private PlayerWeapon playerWeapon;
+    private bool isFireHolding;
+
     private void Awake()
     {
         inputActions = new PlayerInputActions();
         playerSettings = GetComponent<PlayerSettings>();
+        playerWeapon = GetComponent<PlayerWeapon>();
         rb = GetComponent<Rigidbody>();
 
         if (playerSettings != null)
@@ -46,6 +50,25 @@ public class Player : MonoBehaviour
     private void Start()
     {
         inputActions.player.Dash.performed += ctx => HandleDash();
+        
+    }
+
+    private void Update()
+    {
+        //* DEBUG *//
+        if(Input.GetKeyDown(KeyCode.P))
+        {
+            // Get the new player settings values
+            if (playerSettings != null)
+            {
+                movementSpeed = playerSettings.DefaultMovementSpeed;
+                acceleration = playerSettings.DefaultAcceleration;
+                deceleration = playerSettings.DefaultDeceleration;
+                dashSpeed = playerSettings.DefaultDashSpeed;
+                dashDuation = playerSettings.DefaultDashDuration;
+                dashCooldown = playerSettings.DefaultDashCooldown;
+            }
+        }
     }
 
     private void FixedUpdate()
@@ -61,7 +84,6 @@ public class Player : MonoBehaviour
         }
 
         TryRotate();
-
     }
 
     private void TryMovement()
@@ -155,14 +177,19 @@ public class Player : MonoBehaviour
         canDash = true;
 
     }
-
     private void OnEnable()
     {
+        inputActions.player.Shoot.performed += ctx => isFireHolding = true;
+        inputActions.player.Shoot.canceled += ctx => isFireHolding = false;
+
         inputActions.Enable();   
     }
     private void OnDisable()
     {
         inputActions.Disable();
     }
+
+    public bool IsFireHolding => isFireHolding;
+   
 }
 
