@@ -19,10 +19,20 @@ public class BulletBehavior : MonoBehaviour
 
         rb.AddForce(transform.forward * normalBulletSpeed, ForceMode.VelocityChange);
 
-        Invoke("Destroy", 1f);
+        Invoke("DestroyAndReturnToPool", 1f);
     }
 
-    public void Destroy()
+    private void OnTriggerEnter(Collider other)
+    {
+        if(other.CompareTag("Enemy"))
+        {
+            //other.GetComponent<EnemyHealth>()?.TakeDamage(damage);
+            Debug.Log("Hit");
+            DestroyAndReturnToPool();
+        }
+    }
+
+    public void DestroyAndReturnToPool()
     {
         ObjectPoolManager.ReturnObjectToPool(gameObject);
     }

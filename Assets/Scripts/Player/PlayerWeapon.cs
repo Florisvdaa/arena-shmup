@@ -71,7 +71,7 @@ public class PlayerWeapon : MonoBehaviour
 
     private void Shoot()
     {
-        Debug.Log("Shoot");
+        //Debug.Log("Shoot");
         // objectPoolManager.SpawnObject(bulletPrefab, spawnPoint.position, spawnPoint.transform.rotation);
 
         GameObject bullet = ObjectPoolManager.SpawnObject(bulletPrefab, spawnPoint.position, spawnPoint.rotation);
