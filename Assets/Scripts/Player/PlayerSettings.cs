@@ -23,5 +23,5 @@ public class PlayerSettings : MonoBehaviour
     public float DefaultDashSpeed => defaultDashSpeed;
     public float DefaultDashDuration => defaultDashDuation;
     public float DefaultDashCooldown => defaultDashCooldown;
-    public float DefaultHealth => defaultHealth;
+    public int DefaultHealth => defaultHealth;
 }

@@ -9,11 +9,6 @@ public class ObjectPoolManager : MonoBehaviour
 
     private static GameObject objectHolder;
 
-    private void Start()
-    {
-        objectHolder = new GameObject("Pooled Objects");
-    }
-
     public static void PrewarmPool(GameObject prefab, int count)
     {
         if (objectHolder == null)

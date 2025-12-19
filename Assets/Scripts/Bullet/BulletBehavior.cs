@@ -6,6 +6,8 @@ public class BulletBehavior : MonoBehaviour
 {
     [SerializeField] private float normalBulletSpeed = 15f;
 
+    private int damage;
+
     private Rigidbody rb;
 
     private void Awake()
@@ -22,18 +24,24 @@ public class BulletBehavior : MonoBehaviour
         Invoke("DestroyAndReturnToPool", 1f);
     }
 
+    public void Initialize(int damage)
+    {
+        this.damage = damage;
+    }
+
     private void OnTriggerEnter(Collider other)
     {
         if(other.CompareTag("Enemy"))
         {
-            //other.GetComponent<EnemyHealth>()?.TakeDamage(damage);
-            Debug.Log("Hit");
+            other.GetComponent<IDamageable>()?.Damage(damage);
+            //Debug.Log("Hit");
             DestroyAndReturnToPool();
         }
     }
 
     public void DestroyAndReturnToPool()
     {
+        CancelInvoke();
         ObjectPoolManager.ReturnObjectToPool(gameObject);
     }
 }

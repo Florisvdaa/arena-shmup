@@ -4,13 +4,15 @@ using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class Player : MonoBehaviour
+public class Player : MonoBehaviour, IDamageable
 {
     [Header("Player Movement settings")]
     [SerializeField] private GameObject playerVisual;
     private Rigidbody rb;
 
     private PlayerInputActions inputActions;
+
+    public int Health { get; set; }
 
     private float movementSpeed;
     private float acceleration;
@@ -44,6 +46,8 @@ public class Player : MonoBehaviour
             dashSpeed = playerSettings.DefaultDashSpeed;
             dashDuation = playerSettings.DefaultDashDuration;
             dashCooldown = playerSettings.DefaultDashCooldown;
+
+            Health = playerSettings.DefaultHealth;
         }
     }
 
@@ -176,6 +180,17 @@ public class Player : MonoBehaviour
         yield return new WaitForSeconds(dashCooldown);
         canDash = true;
 
+    }
+
+    public void Damage(int amount) 
+    {
+        Health -= amount;
+
+        Debug.Log($"Damage: {amount} new healht: {Health}");
+    }
+    public void OnDeath()
+    {
+        // Player is dead.
     }
     private void OnEnable()
     {

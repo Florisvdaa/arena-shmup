@@ -71,13 +71,14 @@ public class PlayerWeapon : MonoBehaviour
 
     private void Shoot()
     {
-        //Debug.Log("Shoot");
-        // objectPoolManager.SpawnObject(bulletPrefab, spawnPoint.position, spawnPoint.transform.rotation);
 
         GameObject bullet = ObjectPoolManager.SpawnObject(bulletPrefab, spawnPoint.position, spawnPoint.rotation);
-        if (bullet == null) { /* out of ammo feedback */ }
 
-        // Raycast / spawn bullet / apply damage here
+        if (bullet == null)
+            return; /* out of ammo feedback */ 
+        
+        BulletBehavior bulletBehavior = bullet.GetComponent<BulletBehavior>();
+        bulletBehavior.Initialize(damage); // expand this with the WeaponSO -> set the data in the Initialize in the bullet instead in here
     }
     public void StartReload()
     {
