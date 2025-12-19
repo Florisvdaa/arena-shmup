@@ -5,21 +5,34 @@ using UnityEngine;
 public class PlayerWeapon : MonoBehaviour
 {
     private Player player;
+    [SerializeField] private Transform spawnPoint;
+    [SerializeField] private WeaponSO currentWeapon;
 
     // Debug
     [SerializeField] private GameObject bulletPrefab;
-    [SerializeField] private Transform spawnPoint;
-    [SerializeField] private int maxAmmo = 30;
-    [SerializeField] private int ammo = 30;
-    [SerializeField] private int damage = 10;
-    [SerializeField] private float reloadTime = 1.5f;
-    [SerializeField] private float fireRate = 5f; // shots per second
+    [SerializeField] private int maxAmmo;
+    [SerializeField] private int ammo;
+    [SerializeField] private int damage;
+    [SerializeField] private float reloadTime;
+    [SerializeField] private float fireRate; // shots per second
 
     private float nextFireTime;
+
+    private bool isReloading;
 
     private void Start()
     {
         player = GetComponent<Player>();
+
+        if(currentWeapon != null )
+        {
+            maxAmmo = currentWeapon.maxAmmo;
+            ammo = currentWeapon.maxAmmo;
+            damage = currentWeapon.damage;
+            reloadTime = currentWeapon.reloadTime;
+            fireRate = currentWeapon.fireRate;
+            bulletPrefab = currentWeapon.bulletPrefab;
+        }
 
         ObjectPoolManager.PrewarmPool(bulletPrefab, maxAmmo);
     }
@@ -34,12 +47,19 @@ public class PlayerWeapon : MonoBehaviour
 
     private void TryShoot()
     {
+        if (isReloading)
+            return;
+
         if (Time.time < nextFireTime)
             return;
 
         if (ammo <= 0)
         {
             Debug.Log("Out of ammo");
+
+            // Reload
+            StartReload();
+
             return;
         }
 
@@ -58,5 +78,24 @@ public class PlayerWeapon : MonoBehaviour
         if (bullet == null) { /* out of ammo feedback */ }
 
         // Raycast / spawn bullet / apply damage here
+    }
+    public void StartReload()
+    {
+        if (isReloading || ammo == maxAmmo)
+            return;
+
+        isReloading = true;
+        StartCoroutine(Reload());
+    }
+
+    private IEnumerator Reload()
+    {
+        Debug.Log("Reloading...");
+        yield return new WaitForSeconds(reloadTime);
+
+        ammo = maxAmmo;
+        isReloading = false;
+
+        Debug.Log("Reload complete");
     }
 }
