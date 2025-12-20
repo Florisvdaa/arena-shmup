@@ -31,6 +31,9 @@ public class Player : MonoBehaviour, IDamageable
     private PlayerWeapon playerWeapon;
     private bool isFireHolding;
 
+    // UI References
+    public bool CanDash => canDash;
+
     private void Awake()
     {
         inputActions = new PlayerInputActions();
@@ -72,6 +75,11 @@ public class Player : MonoBehaviour, IDamageable
                 dashDuation = playerSettings.DefaultDashDuration;
                 dashCooldown = playerSettings.DefaultDashCooldown;
             }
+        }
+
+        if (Input.GetKeyDown(KeyCode.V))
+        {
+            Damage(10);
         }
     }
 

@@ -99,4 +99,8 @@ public class PlayerWeapon : MonoBehaviour
 
         Debug.Log("Reload complete");
     }
+
+    // UI References
+    public int CurrrentAmmo => ammo;
+    public int CurrentMaxAmmo => maxAmmo;
 }
