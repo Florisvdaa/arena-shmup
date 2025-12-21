@@ -18,4 +18,4 @@ MonoBehaviour:
   enemyHealth: 20
   enemySpeed: 1
   enemyDamage: 10
-  detectionRadius: 3
+  detectionRadius: 10

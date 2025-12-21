@@ -9,10 +9,10 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5970357830407965285}
-  - component: {fileID: 2024593153612793034}
   - component: {fileID: 1323533387184501206}
   - component: {fileID: 2517903256917618199}
-  m_Layer: 0
+  - component: {fileID: 4736549036893637419}
+  m_Layer: 10
   m_Name: Enemy
   m_TagString: Enemy
   m_Icon: {fileID: 0}
@@ -35,22 +35,6 @@ Transform:
   - {fileID: 8917828349429067213}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &2024593153612793034
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1341565497399383977}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 91b3496b202555045ae53d0e578f0bf3, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  enemySO: {fileID: 11400000, guid: 6a679207868ff264e83a067846b79560, type: 2}
-  detectionLayer:
-    serializedVersion: 2
-    m_Bits: 8
 --- !u!65 &1323533387184501206
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -82,7 +66,7 @@ Rigidbody:
   serializedVersion: 4
   m_Mass: 1
   m_Drag: 0
-  m_AngularDrag: 0.05
+  m_AngularDrag: 0
   m_CenterOfMass: {x: 0, y: 0, z: 0}
   m_InertiaTensor: {x: 1, y: 1, z: 1}
   m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
@@ -94,11 +78,32 @@ Rigidbody:
     m_Bits: 0
   m_ImplicitCom: 1
   m_ImplicitTensor: 1
-  m_UseGravity: 1
+  m_UseGravity: 0
   m_IsKinematic: 0
   m_Interpolate: 0
-  m_Constraints: 4
+  m_Constraints: 116
   m_CollisionDetection: 0
+--- !u!114 &4736549036893637419
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1341565497399383977}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f092a8d66c6bd494494df82b69fe9fc1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  enemySO: {fileID: 11400000, guid: 6a679207868ff264e83a067846b79560, type: 2}
+  detectionLayer:
+    serializedVersion: 2
+    m_Bits: 8
+  chargeSpeed: 35
+  chargeWindupTime: 1
+  chargeDuration: 0.2
+  chargeCooldown: 2
+  chargeStopDistance: 1.01
 --- !u!1 &1992395101367523332
 GameObject:
   m_ObjectHideFlags: 0
@@ -110,7 +115,7 @@ GameObject:
   - component: {fileID: 3889422794368617691}
   - component: {fileID: 1112064506019990615}
   - component: {fileID: 6751119380700452087}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Cube
   m_TagString: Enemy
   m_Icon: {fileID: 0}
@@ -191,7 +196,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8917828349429067213}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Enemy Visual
   m_TagString: Enemy
   m_Icon: {fileID: 0}

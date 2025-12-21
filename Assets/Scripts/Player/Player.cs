@@ -27,8 +27,9 @@ public class Player : MonoBehaviour, IDamageable
     private Vector3 dashDirection = Vector3.zero;
 
     private PlayerSettings playerSettings;
-
+    private MeshTrail playerMeshTrail;
     private PlayerWeapon playerWeapon;
+    
     private bool isFireHolding;
 
     // UI References
@@ -39,6 +40,7 @@ public class Player : MonoBehaviour, IDamageable
         inputActions = new PlayerInputActions();
         playerSettings = GetComponent<PlayerSettings>();
         playerWeapon = GetComponent<PlayerWeapon>();
+        playerMeshTrail = GetComponent<MeshTrail>();
         rb = GetComponent<Rigidbody>();
 
         if (playerSettings != null)
@@ -148,7 +150,7 @@ public class Player : MonoBehaviour, IDamageable
 
     private void HandleDash()
     {
-        Debug.Log("Dash");
+        //Debug.Log("Dash");
         if (!canDash || isDashing) return;
 
         // Decide the direction to dash in.
@@ -172,6 +174,8 @@ public class Player : MonoBehaviour, IDamageable
 
         rb.velocity = Vector3.zero;
 
+        playerMeshTrail.StartTrailCoroutine(dashDuation);
+
         float elapsed = 0f;
         while(elapsed < dashDuation)
         {
@@ -187,14 +191,13 @@ public class Player : MonoBehaviour, IDamageable
         // Start cooldown
         yield return new WaitForSeconds(dashCooldown);
         canDash = true;
-
     }
 
     public void Damage(int amount) 
     {
         Health -= amount;
 
-        Debug.Log($"Damage: {amount} new healht: {Health}");
+        Debug.Log($"Damage: {amount} new health: {Health}");
     }
     public void OnDeath()
     {

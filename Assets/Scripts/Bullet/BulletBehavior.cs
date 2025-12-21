@@ -4,7 +4,8 @@ using UnityEngine;
 
 public class BulletBehavior : MonoBehaviour
 {
-    [SerializeField] private float normalBulletSpeed = 15f;
+    [SerializeField] private float normalBulletSpeed = 25f;
+    [SerializeField] private float normalDestroyTime = 1f;
 
     private int damage;
 
@@ -21,7 +22,7 @@ public class BulletBehavior : MonoBehaviour
 
         rb.AddForce(transform.forward * normalBulletSpeed, ForceMode.VelocityChange);
 
-        Invoke("DestroyAndReturnToPool", 1f);
+        Invoke("DestroyAndReturnToPool", normalDestroyTime); 
     }
 
     public void Initialize(int damage)
