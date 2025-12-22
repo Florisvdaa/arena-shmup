@@ -5,7 +5,8 @@ using UnityEngine;
 public class PlayerWeapon : MonoBehaviour
 {
     private Player player;
-    [SerializeField] private Transform spawnPoint;
+    [SerializeField] private Transform spawnPointRight;
+    [SerializeField] private Transform spawnPointLeft;
     [SerializeField] private WeaponSO currentWeapon;
 
     // Debug
@@ -16,8 +17,8 @@ public class PlayerWeapon : MonoBehaviour
     [SerializeField] private float reloadTime;
     [SerializeField] private float fireRate; // shots per second
 
+    private bool useRightSpawnPoint;
     private float nextFireTime;
-
     private bool isReloading;
 
     private void Start()
@@ -71,6 +72,7 @@ public class PlayerWeapon : MonoBehaviour
 
     private void Shoot()
     {
+        Transform spawnPoint = useRightSpawnPoint ? spawnPointRight : spawnPointLeft;
 
         GameObject bullet = ObjectPoolManager.SpawnObject(bulletPrefab, spawnPoint.position, spawnPoint.rotation);
 
@@ -79,6 +81,8 @@ public class PlayerWeapon : MonoBehaviour
         
         BulletBehavior bulletBehavior = bullet.GetComponent<BulletBehavior>();
         bulletBehavior.Initialize(damage); // expand this with the WeaponSO -> set the data in the Initialize in the bullet instead in here
+
+        useRightSpawnPoint = !useRightSpawnPoint;
     }
     public void StartReload()
     {
