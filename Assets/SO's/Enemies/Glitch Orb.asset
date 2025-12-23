@@ -15,7 +15,7 @@ MonoBehaviour:
   enemyType: 0
   enemyPrefab: {fileID: 0}
   enemyName: Glitch Orb
-  enemyHealth: 20
+  enemyHealth: 1000
   enemySpeed: 1
   enemyDamage: 10
   detectionRadius: 10

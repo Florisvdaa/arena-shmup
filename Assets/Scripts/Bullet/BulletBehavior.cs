@@ -6,6 +6,7 @@ public class BulletBehavior : MonoBehaviour
 {
     [SerializeField] private float normalBulletSpeed = 25f;
     [SerializeField] private float normalDestroyTime = 1f;
+    [SerializeField] private GameObject hitParticleSystem;
 
     private int damage;
 
@@ -36,6 +37,10 @@ public class BulletBehavior : MonoBehaviour
         {
             other.GetComponent<IDamageable>()?.Damage(damage);
             //Debug.Log("Hit");
+
+            Instantiate(hitParticleSystem, transform.position, Quaternion.identity);
+
+
             DestroyAndReturnToPool();
         }
     }

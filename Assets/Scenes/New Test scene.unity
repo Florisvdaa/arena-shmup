@@ -2478,8 +2478,12 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1341565497399383977, guid: 7cd6009650575374fa165db5879f1bc6, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 4736549036893637419, guid: 7cd6009650575374fa165db5879f1bc6, type: 3}
+      propertyPath: hitParticleSystem
+      value: 
+      objectReference: {fileID: 529110483464772268, guid: 263958afae4e3fb4783e9e40e21961fa, type: 3}
     - target: {fileID: 5970357830407965285, guid: 7cd6009650575374fa165db5879f1bc6, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0

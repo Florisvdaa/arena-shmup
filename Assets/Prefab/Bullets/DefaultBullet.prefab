@@ -148,6 +148,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   normalBulletSpeed: 25
+  normalDestroyTime: 1
+  hitParticleSystem: {fileID: 529110483464772268, guid: 263958afae4e3fb4783e9e40e21961fa, type: 3}
 --- !u!96 &2497642713344657776
 TrailRenderer:
   serializedVersion: 3

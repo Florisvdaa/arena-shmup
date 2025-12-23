@@ -10,7 +10,7 @@ public abstract class Enemy : MonoBehaviour, IDamageable
     [Header("Base Enemy Settings")]
     [SerializeField] protected EnemySO enemySO;
     [SerializeField] protected LayerMask detectionLayer;
-
+    //[SerializeField] protected GameObject hitParticleSystem;
     protected Transform target;
     protected Rigidbody rb;
 
@@ -60,6 +60,8 @@ public abstract class Enemy : MonoBehaviour, IDamageable
 
     public void Damage(int amount)
     {
+        //Instantiate(hitParticleSystem,transform.position, Quaternion.identity);
+
         health -= amount;
         if (health <= 0)
            OnDeath();
