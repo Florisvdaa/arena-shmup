@@ -36,11 +36,10 @@ public class BulletBehavior : MonoBehaviour
         if(other.CompareTag("Enemy"))
         {
             other.GetComponent<IDamageable>()?.Damage(damage);
-            //Debug.Log("Hit");
-
-            Instantiate(hitParticleSystem, transform.position, Quaternion.identity);
-
-
+            DestroyAndReturnToPool();
+        }
+        else if (other.CompareTag("Wall"))
+        {
             DestroyAndReturnToPool();
         }
     }

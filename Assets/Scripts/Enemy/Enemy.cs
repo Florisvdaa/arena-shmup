@@ -9,7 +9,9 @@ public abstract class Enemy : MonoBehaviour, IDamageable
 {
     [Header("Base Enemy Settings")]
     [SerializeField] protected EnemySO enemySO;
+    [SerializeField] protected Transform enemyVisualTransform;
     [SerializeField] protected LayerMask detectionLayer;
+    [SerializeField] private GameObject explodeParticle;
     //[SerializeField] protected GameObject hitParticleSystem;
     protected Transform target;
     protected Rigidbody rb;
@@ -18,6 +20,7 @@ public abstract class Enemy : MonoBehaviour, IDamageable
     protected int speed;
     protected int damage;
     protected float detectionRadius;
+    protected GameObject enemyVisual;
 
     public int Health { get; set; }
     protected virtual void Awake()
@@ -32,6 +35,10 @@ public abstract class Enemy : MonoBehaviour, IDamageable
             detectionRadius = enemySO.detectionRadius;
 
             Health = health;
+
+            enemyVisual = Instantiate(enemySO.enemyPrefab, enemyVisualTransform.position, Quaternion.identity, enemyVisualTransform);
+
+            SetupParticle();
         }
     }
 
@@ -69,7 +76,20 @@ public abstract class Enemy : MonoBehaviour, IDamageable
 
     public void OnDeath()
     {
+        Instantiate(explodeParticle, transform.position, Quaternion.identity);
+
         Destroy(this.gameObject);
+    }
+
+    private void SetupParticle()
+    {
+        ParticleSystemRenderer psr = explodeParticle.GetComponent<ParticleSystemRenderer>();
+
+        MeshRenderer enemyRenderer = enemyVisual.GetComponentInChildren<MeshRenderer>();
+        Material enemyVisualMat = enemyRenderer.sharedMaterial;
+
+        psr.material = enemyVisualMat;
+        
     }
 
     private void OnDrawGizmos()

@@ -13,9 +13,9 @@ MonoBehaviour:
   m_Name: Glitch Orb
   m_EditorClassIdentifier: 
   enemyType: 0
-  enemyPrefab: {fileID: 0}
+  enemyPrefab: {fileID: 4573938499237123796, guid: a2fbedca7598883479757d8684d2d6d0, type: 3}
   enemyName: Glitch Orb
-  enemyHealth: 1000
+  enemyHealth: 2
   enemySpeed: 1
   enemyDamage: 10
   detectionRadius: 10

@@ -11,14 +11,13 @@ public class GlitchOrb : Enemy
     [SerializeField] private float chargeCooldown;
     [SerializeField] private float chargeStopDistance;
 
-
     private bool hasDealtChargeDamage;
     private bool isCharging;
     private float lastChargeTime;
     private Vector3 chargeDirection;
     private Vector3 lastKnownTargetPos;
     private IDamageable cachedTargetDamageable;
-    
+    private MeshTrail meshTrail;    
 
     private int enemyLayer;
     private int playerLayer;
@@ -29,6 +28,7 @@ public class GlitchOrb : Enemy
 
         enemyLayer = LayerMask.NameToLayer("GlitchOrb");
         playerLayer = LayerMask.NameToLayer("Player");
+        meshTrail = GetComponent<MeshTrail>();
     }
 
     protected override void EnemyBehavior()
@@ -49,6 +49,7 @@ public class GlitchOrb : Enemy
         isCharging = true;
         hasDealtChargeDamage = false;
         lastChargeTime = Time.time;
+
         
         Physics.IgnoreLayerCollision(enemyLayer, playerLayer, true);
         rb.isKinematic = true;
@@ -57,6 +58,8 @@ public class GlitchOrb : Enemy
         // wind up
         yield return new WaitForSeconds(chargeWindupTime);
 
+        meshTrail.StartTrailCoroutine(chargeDuration);
+        
         lastKnownTargetPos = target.position;
         chargeDirection = (lastKnownTargetPos - transform.position).normalized;
         

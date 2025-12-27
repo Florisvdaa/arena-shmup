@@ -33,6 +33,8 @@ public class MeshTrail : MonoBehaviour
 
     private IEnumerator AcitvateTrail(float timeActive)
     {
+        GameObject parentObj = new GameObject("MeshTrail Parent");
+
         while (timeActive > 0)
         {
             timeActive -= meshRefreshRate;
@@ -47,6 +49,7 @@ public class MeshTrail : MonoBehaviour
                 GameObject obj = new GameObject();
                 obj.transform.SetPositionAndRotation(positionToSpawn.position, positionToSpawn.rotation);
                 obj.transform.localScale = meshRenderers[i].transform.localScale * meshTrailScale;
+                obj.transform.SetParent(parentObj.transform , true);
 
                 MeshRenderer mr = obj.AddComponent<MeshRenderer>();
                 MeshFilter mf = obj.AddComponent<MeshFilter>();
@@ -65,6 +68,8 @@ public class MeshTrail : MonoBehaviour
 
             yield return new WaitForSeconds(meshRefreshRate);
         }
+
+        Destroy(parentObj);
 
         isTrailActive = false;
     }
