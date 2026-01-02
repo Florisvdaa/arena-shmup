@@ -16,6 +16,8 @@ public class PlayerWeapon : MonoBehaviour
     [SerializeField] private int damage;
     [SerializeField] private float reloadTime;
     [SerializeField] private float fireRate; // shots per second
+    
+    [SerializeField] private float criticalHitChance = 0.2f;
 
     private bool useRightSpawnPoint;
     private float nextFireTime;
@@ -80,7 +82,20 @@ public class PlayerWeapon : MonoBehaviour
             return; /* out of ammo feedback */ 
         
         BulletBehavior bulletBehavior = bullet.GetComponent<BulletBehavior>();
-        bulletBehavior.Initialize(damage); // expand this with the WeaponSO -> set the data in the Initialize in the bullet instead in here
+
+        // Critical hit chance
+        float randValue = Random.value;
+        if(randValue < criticalHitChance)
+        {
+            int newDamage = damage * 2;
+            bulletBehavior.Initialize(newDamage);
+
+            Debug.Log(newDamage);
+        }
+        else
+        {
+            bulletBehavior.Initialize(damage);
+        }
 
         useRightSpawnPoint = !useRightSpawnPoint;
     }
@@ -105,6 +120,6 @@ public class PlayerWeapon : MonoBehaviour
     }
 
     // UI References
-    public int CurrrentAmmo => ammo;
+    public int CurrentAmmo => ammo;
     public int CurrentMaxAmmo => maxAmmo;
 }

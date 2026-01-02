@@ -13,6 +13,7 @@ public class Player : MonoBehaviour, IDamageable
     private PlayerInputActions inputActions;
 
     public int Health { get; set; }
+    public int MaxHealth { get; set; }
 
     private float movementSpeed;
     private float acceleration;
@@ -52,6 +53,7 @@ public class Player : MonoBehaviour, IDamageable
             dashDuation = playerSettings.DefaultDashDuration;
             dashCooldown = playerSettings.DefaultDashCooldown;
 
+            MaxHealth = playerSettings.DefaultHealth;
             Health = playerSettings.DefaultHealth;
         }
     }
@@ -64,25 +66,25 @@ public class Player : MonoBehaviour, IDamageable
 
     private void Update()
     {
-        //* DEBUG *//
-        if(Input.GetKeyDown(KeyCode.P))
-        {
-            // Get the new player settings values
-            if (playerSettings != null)
-            {
-                movementSpeed = playerSettings.DefaultMovementSpeed;
-                acceleration = playerSettings.DefaultAcceleration;
-                deceleration = playerSettings.DefaultDeceleration;
-                dashSpeed = playerSettings.DefaultDashSpeed;
-                dashDuation = playerSettings.DefaultDashDuration;
-                dashCooldown = playerSettings.DefaultDashCooldown;
-            }
-        }
+    //    //* DEBUG *//
+    //    if(Input.GetKeyDown(KeyCode.P))
+    //    {
+    //        // Get the new player settings values
+    //        if (playerSettings != null)
+    //        {
+    //            movementSpeed = playerSettings.DefaultMovementSpeed;
+    //            acceleration = playerSettings.DefaultAcceleration;
+    //            deceleration = playerSettings.DefaultDeceleration;
+    //            dashSpeed = playerSettings.DefaultDashSpeed;
+    //            dashDuation = playerSettings.DefaultDashDuration;
+    //            dashCooldown = playerSettings.DefaultDashCooldown;
+    //        }
+    //    }
 
-        if (Input.GetKeyDown(KeyCode.V))
-        {
-            Damage(10);
-        }
+    //    if (Input.GetKeyDown(KeyCode.V))
+    //    {
+    //        Damage(10);
+    //    }
     }
 
     private void FixedUpdate()

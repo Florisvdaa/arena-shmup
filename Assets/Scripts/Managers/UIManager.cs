@@ -12,12 +12,23 @@ public class UIManager : MonoBehaviour
 
     [Header("Player UI")]
     [SerializeField] private GameObject player;
-    [SerializeField] private Slider healthSlider;
+
+    [Header("Health UI")]
+    [SerializeField] private Image healthFillImage;
+    [SerializeField] private Image healthFillImageDelayed;
+    [SerializeField] private TextMeshProUGUI healthPercentageText;
+
+    [Header("Dash UI")]
     [SerializeField] private Slider dashSlider;
-    [SerializeField] private TextMeshProUGUI ammoText;
+
+    [Header("Ammo UI")]
+    [SerializeField] private TextMeshProUGUI currentAmmoText;
+    [SerializeField] private TextMeshProUGUI maxAmmoText;
 
     private Player playerScript;
     private PlayerWeapon playerWeapon;
+
+    [SerializeField] private float delayedLerpSpeed = 2f;
 
     private bool canUpdate = false;
     
@@ -35,20 +46,35 @@ public class UIManager : MonoBehaviour
             playerScript = player.GetComponent<Player>();
             playerWeapon = player.GetComponent<PlayerWeapon>();
 
-            healthSlider.maxValue = playerScript.Health;
-            healthSlider.value = playerScript.Health;
-
             canUpdate = true;
         }
     }
 
     private void Update()
     {
-        if (canUpdate)
-        {
-            ammoText.text = playerWeapon.CurrrentAmmo.ToString() + " / " + playerWeapon.CurrentMaxAmmo.ToString();
+        if (!canUpdate) return;
 
-            healthSlider.value = playerScript.Health;
-        }   
+        // Ammo
+        currentAmmoText.text = playerWeapon.CurrentAmmo.ToString();
+        maxAmmoText.text = " / " + playerWeapon.CurrentMaxAmmo.ToString();
+
+        // Health
+        float targetFill = playerScript.Health / (float)playerScript.MaxHealth;
+
+        // Instant bar
+        healthFillImage.fillAmount = targetFill;
+
+        // Delayed Bar (Lerp)
+        if (healthFillImageDelayed.fillAmount > targetFill)
+        {
+            healthFillImageDelayed.fillAmount = Mathf.Lerp(healthFillImageDelayed.fillAmount, targetFill, Time.deltaTime * delayedLerpSpeed);
+        }
+        else
+        {
+            // If healing, snap instantly
+            healthFillImageDelayed.fillAmount = targetFill;
+        }    
+
+        healthPercentageText.text = playerScript.Health + "%";
     }
 }
