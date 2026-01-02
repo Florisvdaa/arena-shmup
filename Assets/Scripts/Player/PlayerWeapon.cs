@@ -83,6 +83,8 @@ public class PlayerWeapon : MonoBehaviour
         
         BulletBehavior bulletBehavior = bullet.GetComponent<BulletBehavior>();
 
+        // When Ammo is almost empty increase the damage of the bullets
+
         // Critical hit chance
         float randValue = Random.value;
         if(randValue < criticalHitChance)
