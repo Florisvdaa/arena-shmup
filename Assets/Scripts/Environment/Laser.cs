@@ -1,15 +1,12 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-public class Laser : MonoBehaviour
+public class Laser : MonoBehaviour, IHazard
 {
     [SerializeField] private float range = 2;
     [SerializeField] private float distanceFromGround = 0.5f;
     [SerializeField] private float rotationSpeed = 5f;
-    [SerializeField] private float activeTimer = 10f; // Active for duration
     [SerializeField] private bool isRotatingLaser = false;
-    [SerializeField] private bool isLaserActive = false;
+
     private LineRenderer lineRenderer;
 
     private void Awake()
@@ -17,32 +14,34 @@ public class Laser : MonoBehaviour
         lineRenderer = GetComponent<LineRenderer>();
     }
 
-    public void ActivateLaser()
+    private void Start()
+    {
+        Deactivate();
+    }
+
+    public void Activate()
     {
         lineRenderer.enabled = true;
-        isLaserActive = true;
-        //UpdateLaserPosition();
+    }
+
+    public void Deactivate()
+    {
+        lineRenderer.enabled = false;
     }
 
     private void Update()
     {
         if (!lineRenderer.enabled) return;
-        
+
         if (isRotatingLaser)
             transform.Rotate(Vector3.up * rotationSpeed * Time.deltaTime);
-        if (isLaserActive )
-            UpdateLaserPosition();
-    }
 
-    public void DeactivateLaser()
-    {
-        lineRenderer.enabled = false;
-        isLaserActive = false;
+        UpdateLaserPosition();
     }
 
     private void UpdateLaserPosition()
     {
-        Vector3 center = new Vector3(transform.position.x, transform.position.y + distanceFromGround, transform.position.z);
+        Vector3 center = transform.position + Vector3.up * distanceFromGround;
         Vector3 leftPos = center - transform.right * range;
         Vector3 rightPos = center + transform.right * range;
 
@@ -50,5 +49,4 @@ public class Laser : MonoBehaviour
         lineRenderer.SetPosition(0, leftPos);
         lineRenderer.SetPosition(1, rightPos);
     }
-
 }
