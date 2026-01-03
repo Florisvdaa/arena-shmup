@@ -51,7 +51,7 @@ public class ShockPlate : MonoBehaviour, IHazard
         yield return new WaitForSeconds(chargeTime);
 
         // Shock Active
-        Debug.Log("Shock Active");
+        //Debug.Log("Shock Active");
         float timer = shockDuration;
 
         while (timer > 0f)
@@ -77,7 +77,7 @@ public class ShockPlate : MonoBehaviour, IHazard
             for (int i = 0; i < runtimeMaterials.Count; i++) 
             {
                 Material mat = runtimeMaterials[i];
-                Color newColor = Color.Lerp(mat.color, targetColor, Time.deltaTime * colorLerpSpeed);
+                Color newColor = Color.Lerp(mat.color, targetColor, Time.deltaTime * chargeTime);
 
                 if (((Vector4)newColor - (Vector4)targetColor).sqrMagnitude > 0.001f) { done = false; }
 
@@ -89,7 +89,7 @@ public class ShockPlate : MonoBehaviour, IHazard
 
     private void ApplyShock()
     {
-        Debug.Log("Shock!");
+        //Debug.Log("Shock!");
 
         Collider[] hits = Physics.OverlapSphere(plateCenter.position, damageRadius, damageMask);
 
@@ -116,4 +116,6 @@ public class ShockPlate : MonoBehaviour, IHazard
     {
         // Optional: add behavior
     }
+
+    public bool IsActive => isShocking;
 }

@@ -6,4 +6,5 @@ public interface IHazard
 {
     void Activate();
     void Deactivate();
+    bool IsActive { get; }
 }

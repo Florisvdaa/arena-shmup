@@ -23,6 +23,7 @@ public class PlayerWeapon : MonoBehaviour
     private float nextFireTime;
     private bool isReloading;
 
+
     private void Start()
     {
         player = GetComponent<Player>();
@@ -56,9 +57,11 @@ public class PlayerWeapon : MonoBehaviour
         if (Time.time < nextFireTime)
             return;
 
+        ammo--;
+        
         if (ammo <= 0)
         {
-            Debug.Log("Out of ammo");
+            Logger.Instance.Log(Color.blue, "Out of ammo" , this.gameObject, "Player");
 
             // Reload
             StartReload();
@@ -68,7 +71,6 @@ public class PlayerWeapon : MonoBehaviour
 
         Shoot();
 
-        ammo--;
         nextFireTime = Time.time + (1f / fireRate);
     }
 
@@ -124,4 +126,6 @@ public class PlayerWeapon : MonoBehaviour
     // UI References
     public int CurrentAmmo => ammo;
     public int CurrentMaxAmmo => maxAmmo;
+    public bool IsReloading => isReloading;
+    public float ReloadTime => reloadTime;
 }

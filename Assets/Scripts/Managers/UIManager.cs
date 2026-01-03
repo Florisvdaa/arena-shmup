@@ -24,6 +24,10 @@ public class UIManager : MonoBehaviour
     [Header("Ammo UI")]
     [SerializeField] private TextMeshProUGUI currentAmmoText;
     [SerializeField] private TextMeshProUGUI maxAmmoText;
+    [SerializeField] private Slider reloadSlider;
+
+    // Reloading
+    private float reloadTimer = 0f;
 
     private Player playerScript;
     private PlayerWeapon playerWeapon;
@@ -57,6 +61,23 @@ public class UIManager : MonoBehaviour
         // Ammo
         currentAmmoText.text = playerWeapon.CurrentAmmo.ToString();
         maxAmmoText.text = " / " + playerWeapon.CurrentMaxAmmo.ToString();
+
+        // Reloading
+        if (playerWeapon.IsReloading)
+        {
+            reloadSlider.gameObject.SetActive(true);
+
+            // Increase timer
+            reloadTimer += Time.deltaTime;
+
+            // Update slider
+            reloadSlider.value = reloadTimer / playerWeapon.ReloadTime;
+        }
+        else
+        {
+            reloadSlider.gameObject.SetActive(false);
+            reloadTimer = 0f;
+        }
 
         // Health
         float targetFill = playerScript.Health / (float)playerScript.MaxHealth;
