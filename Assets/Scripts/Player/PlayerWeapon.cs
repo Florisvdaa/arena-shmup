@@ -18,6 +18,7 @@ public class PlayerWeapon : MonoBehaviour
     [SerializeField] private float fireRate; // shots per second
     
     [SerializeField] private float criticalHitChance = 0.2f;
+    [SerializeField] private int lastBulletIncrease = 5;
 
     private bool useRightSpawnPoint;
     private float nextFireTime;
@@ -57,11 +58,10 @@ public class PlayerWeapon : MonoBehaviour
         if (Time.time < nextFireTime)
             return;
 
-        ammo--;
         
         if (ammo <= 0)
         {
-            Logger.Instance.Log(Color.blue, "Out of ammo" , this.gameObject, "Player");
+            Logger.Instance.Log(Color.white, "Out of ammo" , this.gameObject, "Player Weapon");
 
             // Reload
             StartReload();
@@ -71,7 +71,14 @@ public class PlayerWeapon : MonoBehaviour
 
         Shoot();
 
+        ammo--;
+
         nextFireTime = Time.time + (1f / fireRate);
+
+        if(ammo <= 0)
+        {
+            StartReload();
+        }
     }
 
     private void Shoot()
@@ -85,8 +92,6 @@ public class PlayerWeapon : MonoBehaviour
         
         BulletBehavior bulletBehavior = bullet.GetComponent<BulletBehavior>();
 
-        // When Ammo is almost empty increase the damage of the bullets
-
         // Critical hit chance
         float randValue = Random.value;
         if(randValue < criticalHitChance)
@@ -98,7 +103,18 @@ public class PlayerWeapon : MonoBehaviour
         }
         else
         {
-            bulletBehavior.Initialize(damage);
+            int currentDamage = damage;
+
+            // When Ammo is almost empty increase the damage of the bullets
+            if (ammo <= 2)
+            {
+                currentDamage += lastBulletIncrease;
+            }
+            
+            //Debug.Log($"{currentDamage}");
+            Logger.Instance.Log(Color.white, $"Damage: {currentDamage}", this.gameObject, "Player Weapon");
+
+            bulletBehavior.Initialize(currentDamage);
         }
 
         useRightSpawnPoint = !useRightSpawnPoint;
@@ -114,13 +130,13 @@ public class PlayerWeapon : MonoBehaviour
 
     private IEnumerator Reload()
     {
-        Debug.Log("Reloading...");
+        Logger.Instance.Log(Color.white, "Reloading...", this.gameObject, "Player Weapon");
         yield return new WaitForSeconds(reloadTime);
 
         ammo = maxAmmo;
         isReloading = false;
 
-        Debug.Log("Reload complete");
+        Logger.Instance.Log(Color.white, "Reload Complete", this.gameObject, "Player Weapon");
     }
 
     // UI References

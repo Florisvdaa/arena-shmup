@@ -12,6 +12,7 @@ public class Laser : MonoBehaviour, IHazard
     [SerializeField] private float distanceFromGround = 0.5f;
     [SerializeField] private float rotationSpeed = 5f;
     [SerializeField] private bool isRotatingLaser = false;
+    [SerializeField] private GameObject laserVisual;
 
     private LineRenderer lineRenderer;
 
@@ -43,8 +44,13 @@ public class Laser : MonoBehaviour, IHazard
         if (!lineRenderer.enabled) return;
 
         if (isRotatingLaser)
+        {
             transform.Rotate(Vector3.up * rotationSpeed * Time.deltaTime);
 
+            // Now rotates the visual but can later be model opening and spawning laser animation
+            laserVisual.transform.Rotate(Vector3.up * rotationSpeed * Time.deltaTime);
+        }
+        
         UpdateLaserPosition();
     }
 

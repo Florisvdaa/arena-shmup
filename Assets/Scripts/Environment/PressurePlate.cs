@@ -28,7 +28,7 @@ public class PressurePlate : MonoBehaviour
             foreach (var hazard in hazards)
                 hazard.Activate();
 
-            StartResetRoutineOnce();
+            //StartResetRoutineOnce();
         }
     }
 
@@ -44,6 +44,8 @@ public class PressurePlate : MonoBehaviour
     {
         foreach (IHazard hazard in hazards)
         {
+            Logger.Instance.Log(Color.yellow, $"{hazard.IsActive}", this.gameObject , "Pressure Plate");
+
             if (hazard.IsActive)
                 return false;
         }
@@ -60,13 +62,16 @@ public class PressurePlate : MonoBehaviour
     private IEnumerator ResetRoutine()
     {
         isResetting = true;
-        Debug.Log("Pressure plate is resetting...");
+        //Debug.Log("Pressure plate is resetting...");
+        Logger.Instance.Log(Color.red, "Pressure Plate is resettings...", this.gameObject, "Pressure Plate");
 
         yield return new WaitForSeconds(5f);
 
         isActive = false;
         isResetting = false;
+        
+        Logger.Instance.Log(Color.red, "Pressure Plate has been reset", this.gameObject, "Pressure Plate");
 
-        Debug.Log("Pressure plate has been reset");
+        //Debug.Log("Pressure plate has been reset");
     }
 }
