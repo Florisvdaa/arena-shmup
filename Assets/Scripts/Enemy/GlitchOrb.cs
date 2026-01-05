@@ -94,17 +94,4 @@ public class GlitchOrb : Enemy
     {
         Physics.IgnoreLayerCollision(enemyLayer, playerLayer, false);
     }
-
-    //private void OnCollisionEnter(Collision collision)
-    //{
-    //    if (!isCharging)
-    //        return;
-
-    //    if (collision.gameObject.CompareTag("Player"))
-    //    {
-    //        collision.gameObject.GetComponentInParent<IDamageable>()?.Damage(damage);
-    //    }
-
-    //    isCharging = false;
-    //}
 }
