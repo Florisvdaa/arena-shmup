@@ -4,9 +4,22 @@ using UnityEngine;
 
 public class RoomManager : MonoBehaviour
 {
+    public static RoomManager Instance { get; private set; }
+
+    private void Awake() // Singleton creation
+    {
+        if (Instance != null && Instance != this)
+            Destroy(gameObject);
+        else Instance = this;
+    }
 
     [SerializeField] private List<RoomSO> roomTypes = new();
     [SerializeField] private List<RoomPrefabEntry> roomPrefabs;
+
+    #region Usage Example
+    // RoomSO randomRoom = GetRandomRoomData(RoomType.Default_Room, DificultyLevel.Default_1);
+    // SpawnRoom(randomRoom, position);
+    #endregion
 
     /// <summary>
     /// Gives you full control over which prefab matches which room type
@@ -14,7 +27,6 @@ public class RoomManager : MonoBehaviour
     /// <param name="roomData"></param>
     /// <param name="position"></param>
     /// <returns></returns>
-
     public Room SpawnRoom(RoomSO roomData, Vector3 position)
     {
         GameObject roomPrefab = GetPrefabForRoomType(roomData.roomType);

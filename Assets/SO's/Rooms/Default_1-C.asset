@@ -10,8 +10,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 383b7fe443ce9c0428c9e57e21beacd9, type: 3}
-  m_Name: Room 1-1
+  m_Name: Default_1-C
   m_EditorClassIdentifier: 
-  roomName: 1-1
-  roomPrefab: {fileID: 5115484741573808014, guid: 4b54aa8be1f717d4c830b320110eaaa3, type: 3}
+  roomName: Default_1-C
   roomType: 0
+  dificultyLevel: 0

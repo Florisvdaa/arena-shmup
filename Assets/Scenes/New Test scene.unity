@@ -6304,10 +6304,30 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   roomTypes:
-  - {fileID: 0}
+  - {fileID: 11400000, guid: 9afd3d9de076a134d8a2ccf8657a825a, type: 2}
+  - {fileID: 11400000, guid: 5efeac26d240e464398cd85805734c67, type: 2}
+  - {fileID: 11400000, guid: c06262a06e9abea4b873ae5b8a2ddc54, type: 2}
+  - {fileID: 11400000, guid: 84e42a28eceb6af4dbd44d36f26ef884, type: 2}
+  - {fileID: 11400000, guid: 5f9fe31e56b790d4fbfa57f74b07bcd7, type: 2}
+  - {fileID: 11400000, guid: e76b463125b646c438c3b94cebf22b4f, type: 2}
   roomPrefabs:
   - type: 0
-    prefabs: []
+    prefabs:
+    - {fileID: 5115484741573808014, guid: 4b54aa8be1f717d4c830b320110eaaa3, type: 3}
+    - {fileID: 5115484741573808014, guid: 187eff456ed341447a9203619dfd4337, type: 3}
+    - {fileID: 5115484741573808014, guid: 45eec8f168d77204ab5171327874d68c, type: 3}
+    - {fileID: 5115484741573808014, guid: 27f8740e33909f94d8310177fd633533, type: 3}
+  - type: 1
+    prefabs:
+    - {fileID: 5115484741573808014, guid: c51f8c8f98a42644c9bc2f2afe3d7363, type: 3}
+    - {fileID: 5115484741573808014, guid: 2f7416aba2b8b814689f4ff043fb3a4c, type: 3}
+  - type: 2
+    prefabs:
+    - {fileID: 5115484741573808014, guid: 6ea16f019be87ab47be740272a07ceed, type: 3}
+    - {fileID: 5115484741573808014, guid: 9ef8b0cf8bc8e9d489a3ba4f6cb337c1, type: 3}
+  - type: 3
+    prefabs:
+    - {fileID: 5115484741573808014, guid: ab33be08c39aef44d8139ef601259c30, type: 3}
 --- !u!1001 &1135808903
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -7298,6 +7318,52 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1297847571}
   m_CullTransparentMesh: 1
+--- !u!1 &1317628091
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1317628093}
+  - component: {fileID: 1317628092}
+  m_Layer: 0
+  m_Name: levelFlowManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1317628092
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1317628091}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 33d938a5f09e0d740921d1d8420d54e1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  roomType: 0
+  DificultyLevel: 0
+--- !u!4 &1317628093
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1317628091}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1338454503
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -8701,6 +8767,10 @@ PrefabInstance:
     - target: {fileID: 1578191749042137878, guid: 14107dce0d6207f4588c1be89d69d2fa, type: 3}
       propertyPath: m_Name
       value: Quad Tile With Shcok Plate
+      objectReference: {fileID: 0}
+    - target: {fileID: 1578191749042137878, guid: 14107dce0d6207f4588c1be89d69d2fa, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7170484235046706461, guid: 14107dce0d6207f4588c1be89d69d2fa, type: 3}
       propertyPath: m_LocalPosition.x
@@ -11791,6 +11861,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Player
       objectReference: {fileID: 0}
+    - target: {fileID: 8276487571755753304, guid: 09e27330287a43048b8e0af8e18dd838, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -11856,6 +11930,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Laser
       objectReference: {fileID: 0}
+    - target: {fileID: 6644826304540133920, guid: 4eecfd7193e89fb40a0af0af220e162b, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -11872,6 +11950,10 @@ PrefabInstance:
     - target: {fileID: 4163204327729113283, guid: a2614c20975965e4687d91b2c7632801, type: 3}
       propertyPath: m_Name
       value: Pressure plate
+      objectReference: {fileID: 0}
+    - target: {fileID: 4163204327729113283, guid: a2614c20975965e4687d91b2c7632801, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6463365333991064759, guid: a2614c20975965e4687d91b2c7632801, type: 3}
       propertyPath: m_LocalPosition.x
@@ -12063,6 +12145,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Room-1-1
       objectReference: {fileID: 0}
+    - target: {fileID: 5115484741573808014, guid: 4b54aa8be1f717d4c830b320110eaaa3, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects:
@@ -12159,3 +12245,4 @@ SceneRoots:
   - {fileID: 6390703248533654746}
   - {fileID: 1743584432}
   - {fileID: 1127053425}
+  - {fileID: 1317628093}
