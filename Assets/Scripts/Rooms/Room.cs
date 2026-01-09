@@ -7,8 +7,9 @@ public class Room : MonoBehaviour
 {
     [Header("Room Setup")]
     [SerializeField] private Transform startPos;
-    [SerializeField] private Transform endPos; // Game Object for collision Trigger, other way?
+    [SerializeField] private Transform endPos; 
     [SerializeField] private float endPosRadius = 2f; // also show this visually (Teleportation visual)
+    [SerializeField] private GameObject teleportParticle;
 
     public event Action<Room> OnRequestNextRoom;
     
@@ -19,7 +20,9 @@ public class Room : MonoBehaviour
     public void Init(RoomSO roomSOData)
     {
         roomData = roomSOData;
-        //player = GameObject.FindGameObjectWithTag("Player").transform;
+        player = GameObject.FindGameObjectWithTag("Player").transform;
+
+        LevelStart();
     }
 
     private void Update()
@@ -31,10 +34,10 @@ public class Room : MonoBehaviour
 
         if (!roomCleard) return;
 
-        //float distance = Vector3.Distance(player.position, endPos.position);
-        bool temp = true;
+        float distance = Vector3.Distance(player.position, endPos.position);
+        //bool temp = true;
 
-        if (/*distance < endPosRadius*/ temp)
+        if (distance < endPosRadius)
         {
             // Fire the event once
             OnRequestNextRoom?.Invoke(this);
@@ -45,6 +48,10 @@ public class Room : MonoBehaviour
     public void MarkRoomCleard()
     {
         roomCleard = true;
+
+        if (teleportParticle != null)
+            teleportParticle.SetActive(true);
+
     }
 
 
@@ -54,11 +61,6 @@ public class Room : MonoBehaviour
     /// </summary>
     private void LevelStart()
     {
-        // player position = startpos + teleportation animation
-
-
+       player.position = startPos.position;
     }
-
-
-    
 }
