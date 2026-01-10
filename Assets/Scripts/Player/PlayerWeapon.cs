@@ -7,6 +7,7 @@ public class PlayerWeapon : MonoBehaviour
     private Player player;
     [SerializeField] private Transform spawnPointRight;
     [SerializeField] private Transform spawnPointLeft;
+    [SerializeField] private Transform spawnPointCenter;
     [SerializeField] private WeaponSO currentWeapon;
 
     // Debug
@@ -20,9 +21,13 @@ public class PlayerWeapon : MonoBehaviour
     [SerializeField] private float criticalHitChance = 0.2f;
     [SerializeField] private int lastBulletIncrease = 5;
 
+    [SerializeField] private bool isUsingMoreSpawnpoints = false;
+
     private bool useRightSpawnPoint;
     private float nextFireTime;
     private bool isReloading;
+
+    private GameObject bullet;
 
 
     private void Start()
@@ -37,6 +42,16 @@ public class PlayerWeapon : MonoBehaviour
             reloadTime = currentWeapon.reloadTime;
             fireRate = currentWeapon.fireRate;
             bulletPrefab = currentWeapon.bulletPrefab;
+
+            if(isUsingMoreSpawnpoints)
+            {
+                spawnPointCenter.gameObject.SetActive(false);
+            }
+            else
+            {
+                spawnPointLeft.gameObject.SetActive(false);
+                spawnPointRight.gameObject.SetActive(false);
+            }
         }
 
         ObjectPoolManager.PrewarmPool(bulletPrefab, maxAmmo);
@@ -83,9 +98,19 @@ public class PlayerWeapon : MonoBehaviour
 
     private void Shoot()
     {
-        Transform spawnPoint = useRightSpawnPoint ? spawnPointRight : spawnPointLeft;
+        if (isUsingMoreSpawnpoints)
+        {
+            Transform spawnPoint = useRightSpawnPoint ? spawnPointRight : spawnPointLeft;
+            //GameObject bullet = ObjectPoolManager.SpawnObject(bulletPrefab, spawnPoint.position, spawnPoint.rotation);
+            bullet = ObjectPoolManager.SpawnObject(bulletPrefab, spawnPoint.position, spawnPoint.rotation);
+        }
+        else
+        {
+            Transform spawnPoint = spawnPointCenter;
+            bullet = ObjectPoolManager.SpawnObject(bulletPrefab, spawnPoint.position, spawnPoint.rotation);
+        }
 
-        GameObject bullet = ObjectPoolManager.SpawnObject(bulletPrefab, spawnPoint.position, spawnPoint.rotation);
+        
 
         if (bullet == null)
             return; /* out of ammo feedback */ 
