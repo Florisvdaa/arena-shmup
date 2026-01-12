@@ -59,7 +59,7 @@ public class PlayerWeapon : MonoBehaviour
 
     private void Update()
     {
-        if (player != null && player.IsFireHolding)
+        if (player != null && player.PlayerCanMove && player.IsFireHolding)
         {
             TryShoot();
         }

@@ -33,6 +33,8 @@ public class Player : MonoBehaviour, IDamageable
     
     private bool isFireHolding;
 
+    private bool playerCanMove = true;
+
     // UI References
     public bool CanDash => canDash;
 
@@ -44,51 +46,19 @@ public class Player : MonoBehaviour, IDamageable
         playerMeshTrail = GetComponent<MeshTrail>();
         rb = GetComponent<Rigidbody>();
 
-        if (playerSettings != null)
-        {
-            movementSpeed = playerSettings.DefaultMovementSpeed;
-            acceleration = playerSettings.DefaultAcceleration;
-            deceleration = playerSettings.DefaultDeceleration;
-            dashSpeed = playerSettings.DefaultDashSpeed;
-            dashDuation = playerSettings.DefaultDashDuration;
-            dashCooldown = playerSettings.DefaultDashCooldown;
-
-            MaxHealth = playerSettings.DefaultHealth;
-            Health = playerSettings.DefaultHealth;
-        }
+        ChangeStats();
     }
 
     private void Start()
     {
         inputActions.player.Dash.performed += ctx => HandleDash();
-        
-    }
-
-    private void Update()
-    {
-    //    //* DEBUG *//
-    //    if(Input.GetKeyDown(KeyCode.P))
-    //    {
-    //        // Get the new player settings values
-    //        if (playerSettings != null)
-    //        {
-    //            movementSpeed = playerSettings.DefaultMovementSpeed;
-    //            acceleration = playerSettings.DefaultAcceleration;
-    //            deceleration = playerSettings.DefaultDeceleration;
-    //            dashSpeed = playerSettings.DefaultDashSpeed;
-    //            dashDuation = playerSettings.DefaultDashDuration;
-    //            dashCooldown = playerSettings.DefaultDashCooldown;
-    //        }
-    //    }
-
-    //    if (Input.GetKeyDown(KeyCode.V))
-    //    {
-    //        Damage(10);
-    //    }
     }
 
     private void FixedUpdate()
     {
+        if (!playerCanMove)
+            return;
+
         if (isDashing)
         {
             // Dash movement handled on physics step for smoothness
@@ -152,6 +122,8 @@ public class Player : MonoBehaviour, IDamageable
 
     private void HandleDash()
     {
+        if (!playerCanMove) return;
+
         //Debug.Log("Dash");
         if (!canDash || isDashing) return;
 
@@ -205,6 +177,23 @@ public class Player : MonoBehaviour, IDamageable
     {
         // Player is dead.
     }
+
+    public void ChangeStats()
+    {
+        if (playerSettings != null)
+        {
+            movementSpeed = playerSettings.DefaultMovementSpeed;
+            acceleration = playerSettings.DefaultAcceleration;
+            deceleration = playerSettings.DefaultDeceleration;
+            dashSpeed = playerSettings.DefaultDashSpeed;
+            dashDuation = playerSettings.DefaultDashDuration;
+            dashCooldown = playerSettings.DefaultDashCooldown;
+
+            MaxHealth = playerSettings.DefaultHealth;
+            Health = playerSettings.DefaultHealth;
+        }
+    }
+
     private void OnEnable()
     {
         inputActions.player.Shoot.performed += ctx => isFireHolding = true;
@@ -218,7 +207,15 @@ public class Player : MonoBehaviour, IDamageable
         inputActions.Disable();
     }
 
+    public void ToggleMovement() => playerCanMove = !playerCanMove;
+
+
+    public bool PlayerCanMove => playerCanMove;
     public bool IsFireHolding => isFireHolding;
-   
+
+    public void IncreaseMovementSpeed(float amount)
+    {
+        movementSpeed += amount;
+    }
 }
 

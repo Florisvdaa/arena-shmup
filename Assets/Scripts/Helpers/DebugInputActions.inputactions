@@ -1,0 +1,54 @@
+{
+    "name": "DebugInputActions",
+    "maps": [
+        {
+            "name": "Debug",
+            "id": "7dbca944-8663-4ca3-a5b2-8c41fd21d00d",
+            "actions": [
+                {
+                    "name": "ToggleDebugConsole",
+                    "type": "Button",
+                    "id": "abc9d368-3e85-481d-bf3c-b3f72cfbb109",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Return",
+                    "type": "Button",
+                    "id": "71bf9b57-d8f0-42bf-977f-4a69cf87a86e",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "0c13e260-2b31-4cd5-9003-0edd09988a4f",
+                    "path": "<Keyboard>/backquote",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "ToggleDebugConsole",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "ee07e9f1-0fbf-4aa5-b21f-99c49251d125",
+                    "path": "<Keyboard>/enter",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Return",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        }
+    ],
+    "controlSchemes": []
+}
