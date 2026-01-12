@@ -11,6 +11,7 @@ public class CheatLog : MonoBehaviour
     private Player player;
 
     public static DebugCommand INCREASE_SPEED;
+    public static DebugCommand CONSOLE;
 
     public List<object> commandList;
 
@@ -22,6 +23,17 @@ public class CheatLog : MonoBehaviour
         {
             player.IncreaseMovementSpeed(10f);
         });
+
+        CONSOLE = new DebugCommand("console", " ", "console", () =>
+        {
+            Debug.Log("Hellow console");
+        });
+
+        commandList = new List<object>
+        {
+            INCREASE_SPEED,
+            CONSOLE,
+        };
     }
 
     private void Start()
