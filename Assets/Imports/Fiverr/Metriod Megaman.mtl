@@ -1,0 +1,22 @@
+# Blender 3.5.0 MTL File: 'Metriod Megaman.blend'
+# www.blender.org
+
+newmtl Metriod_Megaman
+Ns 562.500000
+Ka 0.250000 0.250000 0.250000
+Ks 0.250000 0.250000 0.250000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 3
+map_Kd texture/Metriod Megaman.png
+
+newmtl glow
+Ns 562.500000
+Ka 0.250000 0.250000 0.250000
+Ks 0.250000 0.250000 0.250000
+Ni 1.450000
+d 1.000000
+illum 3
+map_Kd texture/Metriod Megaman.png
+map_Ke texture/Metriod Megaman.png
