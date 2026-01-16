@@ -2938,6 +2938,18 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 86325638569306618, guid: 09e27330287a43048b8e0af8e18dd838, type: 3}
   m_PrefabInstance: {fileID: 3726321346916563280}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &405295050
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 405295036}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: af11c8eaf4c78d843a310542f2b9e235, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &406250284
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -11613,6 +11625,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3214712872617534967, guid: 09e27330287a43048b8e0af8e18dd838, type: 3}
+      propertyPath: m_Controller
+      value: 
+      objectReference: {fileID: 9100000, guid: b9a68e94040967949849c9b69882f4c2, type: 2}
     - target: {fileID: 5191032554542584779, guid: 09e27330287a43048b8e0af8e18dd838, type: 3}
       propertyPath: spawnPointCenter
       value: 
@@ -11631,7 +11647,10 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 8213685659672849385, guid: 09e27330287a43048b8e0af8e18dd838, type: 3}
       insertIndex: 1
       addedObject: {fileID: 1159088557}
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 8276487571755753304, guid: 09e27330287a43048b8e0af8e18dd838, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 405295050}
   m_SourcePrefab: {fileID: 100100000, guid: 09e27330287a43048b8e0af8e18dd838, type: 3}
 --- !u!1001 &4324412287757494033
 PrefabInstance:
