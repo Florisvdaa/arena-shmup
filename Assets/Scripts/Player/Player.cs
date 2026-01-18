@@ -198,7 +198,7 @@ public class Player : MonoBehaviour, IDamageable
     {
         inputActions.player.Shoot.performed += ctx => isFireHolding = true;
         inputActions.player.Shoot.canceled += ctx => isFireHolding = false;
-        inputActions.player.Reload.performed += ctx => playerWeapon.StartReload();
+        //inputActions.player.Reload.performed += ctx => playerWeapon.StartCooldown();
 
         inputActions.Enable();   
     }

@@ -17,25 +17,21 @@ public class UIManager : MonoBehaviour
     [SerializeField] private Image healthFillImage;
     [SerializeField] private Image healthFillImageDelayed;
     [SerializeField] private TextMeshProUGUI healthPercentageText;
-
-    [Header("Dash UI")]
-    [SerializeField] private Slider dashSlider;
-
-    [Header("Ammo UI")]
-    [SerializeField] private TextMeshProUGUI currentAmmoText;
-    [SerializeField] private TextMeshProUGUI maxAmmoText;
-    [SerializeField] private Slider reloadSlider;
-
-    // Reloading
-    private float reloadTimer = 0f;
-
-    private Player playerScript;
-    private PlayerWeapon playerWeapon;
-
     [SerializeField] private float delayedLerpSpeed = 2f;
 
+    [Header("Dash UI")]
+    [SerializeField] private Image dashFillImage;
+
+    [Header("Ammo UI")]
+    [SerializeField] private Image heatFillImage;
+    [SerializeField] private Color coolColor = Color.cyan;
+    [SerializeField] private Color hotColor = Color.red;
+
+    private float cooldownTimer = 0f;
+    private Player playerScript;
+    private PlayerWeapon playerWeapon;
     private bool canUpdate = false;
-    
+
     private void Awake()
     {
         if (Instance != null && Instance != this)
@@ -45,11 +41,10 @@ public class UIManager : MonoBehaviour
 
     private void Start()
     {
-        if(player != null)
+        if (player != null)
         {
             playerScript = player.GetComponent<Player>();
             playerWeapon = player.GetComponent<PlayerWeapon>();
-
             canUpdate = true;
         }
     }
@@ -58,44 +53,72 @@ public class UIManager : MonoBehaviour
     {
         if (!canUpdate) return;
 
-        // Ammo
-        currentAmmoText.text = playerWeapon.CurrentAmmo.ToString();
-        maxAmmoText.text = " / " + playerWeapon.CurrentMaxAmmo.ToString();
-
-        // Reloading
-        if (playerWeapon.IsReloading)
-        {
-            reloadSlider.gameObject.SetActive(true);
-
-            // Increase timer
-            reloadTimer += Time.deltaTime;
-
-            // Update slider
-            reloadSlider.value = reloadTimer / playerWeapon.ReloadTime;
-        }
-        else
-        {
-            reloadSlider.gameObject.SetActive(false);
-            reloadTimer = 0f;
-        }
+        UpdateWeaponUI();
 
         // Health
         float targetFill = playerScript.Health / (float)playerScript.MaxHealth;
 
-        // Instant bar
         healthFillImage.fillAmount = targetFill;
 
-        // Delayed Bar (Lerp)
         if (healthFillImageDelayed.fillAmount > targetFill)
         {
-            healthFillImageDelayed.fillAmount = Mathf.Lerp(healthFillImageDelayed.fillAmount, targetFill, Time.deltaTime * delayedLerpSpeed);
+            healthFillImageDelayed.fillAmount =
+                Mathf.Lerp(healthFillImageDelayed.fillAmount, targetFill, Time.deltaTime * delayedLerpSpeed);
         }
         else
         {
-            // If healing, snap instantly
             healthFillImageDelayed.fillAmount = targetFill;
-        }    
+        }
 
         healthPercentageText.text = playerScript.Health + "%";
+    }
+
+    private void UpdateWeaponUI()
+    {
+        float heatPercent = (float)playerWeapon.CurrentAmmo / playerWeapon.CurrentMaxAmmo;
+
+        // NORMAL HEAT (not overheated)
+        if (heatPercent > 0f && !playerWeapon.IsCoolingDown)
+        {
+            cooldownTimer = 0f;
+
+            heatFillImage.gameObject.SetActive(true);
+
+            // Smooth fill
+            heatFillImage.fillAmount = Mathf.Lerp(
+                heatFillImage.fillAmount,
+                heatPercent,
+                Time.deltaTime * 10f
+            );
+
+            heatFillImage.color = Color.Lerp(coolColor, hotColor, heatFillImage.fillAmount);
+            return;
+        }
+
+        // OVERHEATED COOLDOWN
+        if (playerWeapon.IsCoolingDown)
+        {
+            heatFillImage.gameObject.SetActive(true);
+
+            cooldownTimer += Time.deltaTime;
+            float cooldownPercent = 1f - (cooldownTimer / playerWeapon.CooldownTime);
+
+            heatFillImage.fillAmount = Mathf.Clamp01(cooldownPercent);
+            heatFillImage.color = Color.Lerp(coolColor, hotColor, heatFillImage.fillAmount);
+
+            if (cooldownPercent <= 0f)
+            {
+                heatFillImage.gameObject.SetActive(false);
+                cooldownTimer = 0f;
+            }
+
+            return;
+        }
+
+        // FULLY COOLED
+        heatFillImage.gameObject.SetActive(false);
+        heatFillImage.fillAmount = 0f;
+        heatFillImage.color = coolColor;
+        cooldownTimer = 0f;
     }
 }

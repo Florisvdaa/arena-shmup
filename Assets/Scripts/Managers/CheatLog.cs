@@ -12,6 +12,7 @@ public class CheatLog : MonoBehaviour
 
     public static DebugCommand INCREASE_SPEED;
     public static DebugCommand CONSOLE;
+    public static DebugCommand DAMAGE;
 
     public List<object> commandList;
 
@@ -29,10 +30,16 @@ public class CheatLog : MonoBehaviour
             Debug.Log("Hellow console");
         });
 
+        DAMAGE = new DebugCommand("damage", "Damages the player", "damage", () =>
+        {
+            player.Damage(10);
+        });
+
         commandList = new List<object>
         {
             INCREASE_SPEED,
             CONSOLE,
+            DAMAGE,
         };
     }
 

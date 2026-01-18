@@ -13,11 +13,14 @@ public class PlayerWeapon : MonoBehaviour
     // Debug
     [SerializeField] private GameObject bulletPrefab;
     [SerializeField] private int maxAmmo;
-    [SerializeField] private int ammo;
+    [SerializeField] private float ammo;
     [SerializeField] private int damage;
-    [SerializeField] private float reloadTime;
+    [SerializeField] private float cooldownTime;
     [SerializeField] private float fireRate; // shots per second
-    
+    [SerializeField] private float passiveCooldownRate = 5f; // Ammo per second
+    private float timeSinceLastFire = 0f;
+    [SerializeField] private float passiveCooldownDelay = 1f; // Seconds before cooldown
+
     [SerializeField] private float criticalHitChance = 0.2f;
     [SerializeField] private int lastBulletIncrease = 5;
 
@@ -25,10 +28,8 @@ public class PlayerWeapon : MonoBehaviour
 
     private bool useRightSpawnPoint;
     private float nextFireTime;
-    private bool isReloading;
-
+    private bool isCoolingDown;
     private GameObject bullet;
-
 
     private void Start()
     {
@@ -36,10 +37,10 @@ public class PlayerWeapon : MonoBehaviour
 
         if(currentWeapon != null )
         {
-            maxAmmo = currentWeapon.maxAmmo;
-            ammo = currentWeapon.maxAmmo;
+            maxAmmo = currentWeapon.overheatCap;
+            ammo = 0;
             damage = currentWeapon.damage;
-            reloadTime = currentWeapon.reloadTime;
+            cooldownTime = currentWeapon.cooldownTime;
             fireRate = currentWeapon.fireRate;
             bulletPrefab = currentWeapon.bulletPrefab;
 
@@ -59,41 +60,47 @@ public class PlayerWeapon : MonoBehaviour
 
     private void Update()
     {
-        if (player != null && player.PlayerCanMove && player.IsFireHolding)
+        if (player == null || !player.PlayerCanMove)
+            return;
+
+        if (player.IsFireHolding)
         {
+            timeSinceLastFire = 0f;
             TryShoot();
+        }
+        else
+        {
+            timeSinceLastFire += Time.deltaTime;
+
+            if (timeSinceLastFire >= passiveCooldownDelay)
+            {
+                // Player is NOT firing for cooldown delay -> start cooldown
+                PassiveCooldown();
+            }
         }
     }
 
     private void TryShoot()
     {
-        if (isReloading)
+        if (isCoolingDown)
             return;
 
         if (Time.time < nextFireTime)
             return;
 
-        
-        if (ammo <= 0)
+        // Overheat
+        if (ammo >= maxAmmo)
         {
-            Logger.Instance.Log(Color.white, "Out of ammo" , this.gameObject, "Player Weapon");
-
-            // Reload
-            StartReload();
-
+            StartCooldown(true);
             return;
         }
 
         Shoot();
 
-        ammo--;
+        ammo += 1f;
+        //ammo += Time.deltaTime * fireRate; // Test
 
         nextFireTime = Time.time + (1f / fireRate);
-
-        if(ammo <= 0)
-        {
-            StartReload();
-        }
     }
 
     private void Shoot()
@@ -101,7 +108,6 @@ public class PlayerWeapon : MonoBehaviour
         if (isUsingMoreSpawnpoints)
         {
             Transform spawnPoint = useRightSpawnPoint ? spawnPointRight : spawnPointLeft;
-            //GameObject bullet = ObjectPoolManager.SpawnObject(bulletPrefab, spawnPoint.position, spawnPoint.rotation);
             bullet = ObjectPoolManager.SpawnObject(bulletPrefab, spawnPoint.position, spawnPoint.rotation);
         }
         else
@@ -110,10 +116,8 @@ public class PlayerWeapon : MonoBehaviour
             bullet = ObjectPoolManager.SpawnObject(bulletPrefab, spawnPoint.position, spawnPoint.rotation);
         }
 
-        
-
         if (bullet == null)
-            return; /* out of ammo feedback */ 
+            return; /* weapon overheat feedback */ 
         
         BulletBehavior bulletBehavior = bullet.GetComponent<BulletBehavior>();
 
@@ -131,7 +135,7 @@ public class PlayerWeapon : MonoBehaviour
             int currentDamage = damage;
 
             // When Ammo is almost empty increase the damage of the bullets
-            if (ammo <= 2)
+            if (ammo >= (maxAmmo - 2))
             {
                 currentDamage += lastBulletIncrease;
             }
@@ -144,29 +148,55 @@ public class PlayerWeapon : MonoBehaviour
 
         useRightSpawnPoint = !useRightSpawnPoint;
     }
-    public void StartReload()
+    public void StartCooldown(bool overheated)
     {
-        if (isReloading || ammo == maxAmmo)
+        if (isCoolingDown)
             return;
 
-        isReloading = true;
-        StartCoroutine(Reload());
+        isCoolingDown = true;
+        StartCoroutine(Cooldown(overheated));
     }
 
-    private IEnumerator Reload()
+    /// <summary>
+    /// cools down the weapon smoothly when player stops firing
+    /// </summary>
+    private void PassiveCooldown()
     {
-        Logger.Instance.Log(Color.white, "Reloading...", this.gameObject, "Player Weapon");
-        yield return new WaitForSeconds(reloadTime);
+        if (isCoolingDown) return;
 
-        ammo = maxAmmo;
-        isReloading = false;
+        if (ammo > 0f)
+        {
+            ammo -= passiveCooldownRate * Time.deltaTime;
+            ammo = Mathf.Clamp(ammo, 0f, maxAmmo);
+        }
 
-        Logger.Instance.Log(Color.white, "Reload Complete", this.gameObject, "Player Weapon");
+    }
+
+    private IEnumerator Cooldown(bool overheated)
+    {
+
+        float time = overheated ? cooldownTime : cooldownTime * 0.25f;
+
+        Logger.Instance.Log(Color.white, overheated ? "OVERHEATED!" : "Cooling...", this.gameObject, "Player Weapon");
+
+        yield return new WaitForSeconds(time);
+
+        ammo = 0;
+        isCoolingDown = false;
+
+        Logger.Instance.Log(Color.white, "Cooldown complete", this.gameObject, "Player Weapon");
+
     }
 
     // UI References
-    public int CurrentAmmo => ammo;
+    public int CurrentAmmo => Mathf.RoundToInt(ammo);
     public int CurrentMaxAmmo => maxAmmo;
-    public bool IsReloading => isReloading;
-    public float ReloadTime => reloadTime;
+    public bool IsCoolingDown => isCoolingDown;
+    public float CooldownTime => cooldownTime;
+    public float PassiveCooldownDuration => (float)ammo / passiveCooldownRate;
+    public float PassiveCooldownTimePerHeat => 1f / passiveCooldownRate;
+    public float PassiveCooldownDurationFromHeat(float heatPercent)
+    {
+        return heatPercent * (1f / passiveCooldownRate);
+    }
 }
