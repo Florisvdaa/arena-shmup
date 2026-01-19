@@ -54,6 +54,8 @@ public class UIManager : MonoBehaviour
         if (!canUpdate) return;
 
         UpdateWeaponUI();
+        UpdateDashUI();
+
 
         // Health
         float targetFill = playerScript.Health / (float)playerScript.MaxHealth;
@@ -72,7 +74,18 @@ public class UIManager : MonoBehaviour
 
         healthPercentageText.text = playerScript.Health + "%";
     }
+    private void UpdateDashUI()
+    {
+        if (playerScript == null) return;
 
+        // DashCooldownProgress goes from 1 → 0
+        float fill = 1f - playerScript.DashCooldownProgress;
+
+        dashFillImage.fillAmount = fill;
+
+        // Optional: hide when full
+        // dashFillImage.gameObject.SetActive(fill < 1f);
+    }
     private void UpdateWeaponUI()
     {
         float heatPercent = (float)playerWeapon.CurrentAmmo / playerWeapon.CurrentMaxAmmo;

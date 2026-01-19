@@ -13,7 +13,11 @@ public class PlayerSettings : MonoBehaviour
     [SerializeField] [Range(1f, 100f)] private float defaultDashSpeed = 10f;
     [SerializeField] [Range(0f, 1f)] private float defaultDashDuation = .3f;
     [SerializeField] [Range(0f, 10f)] private float defaultDashCooldown = 1f;
-    
+
+    [SerializeField][Range(5f, 15f)] private float dashMaxDistance = 10f;
+    [SerializeField] private float dashSafeOffset = 0.5f;
+    [SerializeField] private LayerMask dashObstacles;
+
     private int defaultHealth = 100;
 
     // References
@@ -24,4 +28,7 @@ public class PlayerSettings : MonoBehaviour
     public float DefaultDashDuration => defaultDashDuation;
     public float DefaultDashCooldown => defaultDashCooldown;
     public int DefaultHealth => defaultHealth;
+    public float DashMaxDistance => dashMaxDistance;
+    public float DashSafeOffset => dashSafeOffset;
+    public LayerMask DashObstacles => dashObstacles;
 }

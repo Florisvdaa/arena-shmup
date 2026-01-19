@@ -26,11 +26,21 @@ public class Player : MonoBehaviour, IDamageable
     private bool isDashing = false;
     private bool canDash = true;
     private Vector3 dashDirection = Vector3.zero;
+    private float dashMaxDistance;
+    private float dashSafeOffset;
+    private LayerMask dashObstacles;
+
 
     private PlayerSettings playerSettings;
     private MeshTrail playerMeshTrail;
     private PlayerWeapon playerWeapon;
-    
+
+    private Animator playerAnimator;
+    private int velocityHash;
+    private int forwardHash;
+    private int strafeHash;
+
+
     private bool isFireHolding;
 
     private bool playerCanMove = true;
@@ -46,6 +56,10 @@ public class Player : MonoBehaviour, IDamageable
         playerMeshTrail = GetComponent<MeshTrail>();
         rb = GetComponent<Rigidbody>();
 
+        playerAnimator = GetComponentInChildren<Animator>();
+        velocityHash = Animator.StringToHash("Velocity");
+        forwardHash = Animator.StringToHash("MoveZ");
+        strafeHash = Animator.StringToHash("MoveX");
         ChangeStats();
     }
 
@@ -59,16 +73,12 @@ public class Player : MonoBehaviour, IDamageable
         if (!playerCanMove)
             return;
 
-        if (isDashing)
-        {
-            // Dash movement handled on physics step for smoothness
-            rb.MovePosition(rb.position + dashDirection * dashSpeed * Time.fixedDeltaTime);
-        }
-        else
-        {
+        if (!isDashing)
             TryMovement();
-        }
 
+
+        UpdateAnimator();
+        //playerAnimator.SetBool("IsShooting", isFireHolding);
         TryRotate();
     }
 
@@ -82,11 +92,17 @@ public class Player : MonoBehaviour, IDamageable
         (
             currentVelocity,
             targetVelocity,
-            ref currentVelocity, // reuse as velocity ref is fine; or use a separate ref var
+            ref currentVelocity, // reuse as velocity ref is fine or use a separate ref var
             (moveDir.sqrMagnitude > 0.001f) ? (1f / acceleration) : (1f / deceleration),
             Mathf.Infinity,
             Time.fixedDeltaTime
         );
+
+        if (moveDir.sqrMagnitude < 0.001f)
+        {
+            currentVelocity = Vector3.zero;
+        }
+
 
         rb.MovePosition(rb.position + currentVelocity * Time.fixedDeltaTime);
     }
@@ -122,25 +138,96 @@ public class Player : MonoBehaviour, IDamageable
 
     private void HandleDash()
     {
-        if (!playerCanMove) return;
+        if (!playerCanMove || !canDash || isDashing)
+            return;
 
-        //Debug.Log("Dash");
-        if (!canDash || isDashing) return;
-
-        // Decide the direction to dash in.
+        // Determine dash direction
         Vector2 moveInput = inputActions.player.Move.ReadValue<Vector2>();
         Vector3 dir = new Vector3(moveInput.x, 0f, moveInput.y);
 
         if (dir.sqrMagnitude < 0.01f)
-        {
-            // fallback -> dash in facing direciotn
             dir = playerVisual.transform.forward;
-        }
+
         dashDirection = dir.normalized;
 
-        StartCoroutine(DashCoroutine());
-    }
+        StartCoroutine(TeleportDash());
 
+        //if (!playerCanMove) return;
+
+        ////Debug.Log("Dash");
+        //if (!canDash || isDashing) return;
+
+        //// Decide the direction to dash in.
+        //Vector2 moveInput = inputActions.player.Move.ReadValue<Vector2>();
+        //Vector3 dir = new Vector3(moveInput.x, 0f, moveInput.y);
+
+        //if (dir.sqrMagnitude < 0.01f)
+        //{
+        //    // fallback -> dash in facing direciotn
+        //    dir = playerVisual.transform.forward;
+        //}
+        //dashDirection = dir.normalized;
+
+        //StartCoroutine(DashCoroutine());
+    }
+    private IEnumerator TeleportDash()
+    {
+        isDashing = true;
+        canDash = false;
+        DashCooldownProgress = 1f;
+
+        rb.velocity = Vector3.zero;
+
+        //playerMeshTrail.StartTrailCoroutine(dashDuation);
+
+        Vector3 startPos = transform.position;
+        Vector3 forward = playerVisual.transform.forward;
+
+        // 1. Cast ray forward
+        if (Physics.Raycast(startPos, forward, out RaycastHit hit, dashMaxDistance, dashObstacles))
+        {
+            float hitDistance = hit.distance;
+
+            // 2. Check if we can teleport THROUGH the wall
+            Vector3 behindWallPos = startPos + forward * (hitDistance + dashSafeOffset);
+
+            // Cast again from behind the wall to see if it's free
+            if (!Physics.CheckSphere(behindWallPos, 0.4f, dashObstacles))
+            {
+                // Teleport THROUGH the wall
+                transform.position = behindWallPos;
+            }
+            else
+            {
+                // Teleport TO the wall hit point (minus offset)
+                Vector3 safePos = hit.point - forward * dashSafeOffset;
+                transform.position = safePos;
+            }
+        }
+        else
+        {
+            // 3. No wall -> teleport full distance
+            transform.position = startPos + forward * dashMaxDistance;
+        }
+
+        // Dash duration is only for visuals
+        yield return new WaitForSeconds(dashDuation);
+
+        isDashing = false;
+
+        // Cooldown timer
+        float timer = 0f;
+        while (timer < dashCooldown)
+        {
+            timer += Time.deltaTime;
+            DashCooldownProgress = 1f - (timer / dashCooldown);
+            yield return null;
+        }
+
+        DashCooldownProgress = 0f;
+        canDash = true;
+
+    }
     private IEnumerator DashCoroutine()
     {
         isDashing = true;
@@ -167,6 +254,33 @@ public class Player : MonoBehaviour, IDamageable
         canDash = true;
     }
 
+    private void UpdateAnimator()
+    {
+        Vector3 flatVel = new Vector3(currentVelocity.x, 0f, currentVelocity.z);
+        float speed = flatVel.magnitude;
+
+        Vector3 dir = flatVel.normalized;
+
+        float forward = Vector3.Dot(dir, playerVisual.transform.forward);
+        float strafe = Vector3.Dot(dir, playerVisual.transform.right);
+
+        // Deadzone
+        if (speed < 0.05f)
+        {
+            forward = 0f;
+            strafe = 0f;
+            speed = 0f;
+        }
+
+        // Apply directional deadzones
+        //if (Mathf.Abs(forward) < 0.05f) forward = 0f;
+        //if (Mathf.Abs(strafe) < 0.05f) strafe = 0f;
+
+        playerAnimator.SetFloat(forwardHash, forward, 0.1f, Time.deltaTime);
+        playerAnimator.SetFloat(strafeHash, strafe, 0.1f, Time.deltaTime);
+        playerAnimator.SetFloat(velocityHash, speed, 0.1f, Time.deltaTime);
+    }
+
     public void Damage(int amount) 
     {
         Health -= amount;
@@ -188,6 +302,10 @@ public class Player : MonoBehaviour, IDamageable
             dashSpeed = playerSettings.DefaultDashSpeed;
             dashDuation = playerSettings.DefaultDashDuration;
             dashCooldown = playerSettings.DefaultDashCooldown;
+
+            dashMaxDistance = playerSettings.DashMaxDistance;
+            dashObstacles = playerSettings.DashObstacles;
+            dashSafeOffset = playerSettings.DashSafeOffset;
 
             MaxHealth = playerSettings.DefaultHealth;
             Health = playerSettings.DefaultHealth;
@@ -212,7 +330,7 @@ public class Player : MonoBehaviour, IDamageable
 
     public bool PlayerCanMove => playerCanMove;
     public bool IsFireHolding => isFireHolding;
-
+    public float DashCooldownProgress { get; private set; } // 0 = ready, 1 = full cooldown
     public void IncreaseMovementSpeed(float amount)
     {
         movementSpeed += amount;

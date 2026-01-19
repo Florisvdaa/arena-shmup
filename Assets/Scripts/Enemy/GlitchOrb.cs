@@ -37,7 +37,7 @@ public class GlitchOrb : Enemy
             return;
 
         float distance = Vector3.Distance(transform.position, target.position);
-    
+
         if (distance <= detectionRadius && Time.time >= lastChargeTime + chargeCooldown)
         {
             StartCoroutine(Charge());

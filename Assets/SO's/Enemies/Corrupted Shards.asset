@@ -13,8 +13,9 @@ MonoBehaviour:
   m_Name: Corrupted Shards
   m_EditorClassIdentifier: 
   enemyType: 1
-  enemyPrefab: {fileID: 0}
+  enemyPrefab: {fileID: 3320024280987157525, guid: e6c0c541a211e1646b96c51b5329f32f, type: 3}
   enemyName: Corrupted Shard
   enemyHealth: 20
   enemySpeed: 5
   enemyDamage: 10
+  detectionRadius: 10
